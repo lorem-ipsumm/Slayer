@@ -12,7 +12,8 @@ Slayer is a Twitter game that allows anyone with an account to play. Every hour 
 	There is no way to check if the game is full at the moment, so try to be as fast as you can to join the game
 
 
-Classes
+##Classes
+
 Each class has a unique set of strengths and weaknesses that synergize when paired with the other classes.
 
 

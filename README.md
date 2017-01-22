@@ -1,4 +1,4 @@
-#Slayer
+*#Slayer
 
 Slayer is a Twitter game that allows anyone with an account to play. Every [time] a new game will begin and everyone who joins will work together to defeat a boss. Each player is randomly assigned a class. Every [time] a new round will begin. In each round the players can individually choose an action using hashtags. Each player has a four slot inventory. As the game progresses, items will randomly be added to the inventories. These items are upgrades that last the duration of the game.
 
@@ -14,11 +14,11 @@ Each class has a unique set of strengths and weaknesses that synergize when pair
 
 ![alt tag](/Resources/Images/Class Icons/Knight.png) **Knight:**
 
-	*Tank*
+	Tank
 	Decent damage [70-170]
 	High armor [20% damage absorbed]
 	
-Actions:
+>Actions:
 	
 	To be determined
 	
@@ -27,7 +27,7 @@ Actions:
 
 ![alt tag](/Resources/Images/Class Icons/Archer.png) **Archer:**
 
-	*Trash*
+	Trash
 	Trash damage [50-120]	
 	High dodge chance [10%]
 	No armor
@@ -36,7 +36,7 @@ Actions:
 
 
 
-Actions:
+>Actions:
 	
 	Self Heal
 		Command: @_SlayerBot_ #heal @[yourname]
@@ -46,11 +46,11 @@ Actions:
 
 ![alt tag](/Resources/Images/Class Icons/Mage.png)  **Mage:**
 
-	*Glass Cannon*
+	Glass Cannon
 	Heal [30% of own HP]
 	High Damage [90-220]
 
-Actions:
+>Actions:
 
 	Heal
 		Command: @_SlayerBot_ #heal @[playername]

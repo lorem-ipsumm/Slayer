@@ -56,7 +56,7 @@ function startGame(){
   players = [];
   imageMessages = [];
   randomPlayerMaker(9);
-  var status = "You can look at the rules, code, and commands at: github.com.";
+  var status = "You can look at the rules, code, and commands at: https://github.com/SolarFloss/Slayer";
 
   context.drawImage(startingBackground,0,0);
   context.fillStyle = "black";
@@ -353,6 +353,15 @@ function tweetCycle(){
           players[i].action = "hit";
           players[i].target = "";
         break;
+      case "self heal":
+        context.fillStyle = "green";
+        context.font = "15px Arial";
+        var healthInfo = players[i].selfHeal();
+        context.fillText(healInfo + " HP " + players[i].name.substring(0,11)),565 - context.measureText(healInfo + " HP " + players[i].name.substring(0,11)).width,ySpacing + 17);
+
+        players[i].action = "hit";
+        players[i].target = "";
+        break;
       case "armor":
         context.fillStyle = "black";
         context.font = "15px Arial";
@@ -360,10 +369,10 @@ function tweetCycle(){
         context.fillText("Dmg Absorption: " + players[i].absorb + "%",565 - context.measureText("Dmg Absorption: " + players[i].absorb + "%").width,ySpacing + 17);
         players[i].action = "hit";
         break;
-      case "speed":
+      case "cape":
         context.fillStyle = "black";
         context.font = "15px Arial";
-        players[i].dodgeChance += .05;
+        players[i].dodgeChance += .02;
         context.fillText("Dodge Chance: " + players[i].dodgeChance + "%",565 - context.measureText("Dodge Chance:" + players[i].dodgeChance + "%").width,ySpacing + 17);
         players[i].action = "hit";
         break;
@@ -571,9 +580,16 @@ function tweetEvent(event){
           var target = "@" +users[1].screen_name;
           if(!checkPlayerArray(target)){
             var player = getPlayer("@" + user);
-            if(player.getPlayerType() == "Mage" || player.getPlayerType() == "Archer"){
-              player.action = "self heal";
-              player.target = getPlayer(target);
+            var target = getPlayer(target);
+            if(player.name == target.name){
+              if(player.getPlayerType() != "Knight"){
+                player.action = "self heal"
+              }
+            }else{
+              if(player.getPlayerType() == "Mage"){
+                player.action = "heal";
+                player.target = target;
+              }
             }
           }
         }else{

@@ -24,8 +24,7 @@ High armor [20% damage absorbed]
 ![alt tag](/Resources/Images/Class Icons/Archer.png) Archer:
 
 	* Trash
-	* Trash damage [50-120]
-	* High dodge chance [10%]
+	* Trash damage [50-120]	* High dodge chance [10%]
 	* No armor
 	* Miss chance?
 	* Self-heal [range]
@@ -59,30 +58,31 @@ Heal
 
 
 ##Items
-	*Heal
+**Heal**
+
 	*Increases current health by 20% of max HP
+	*@_SlayerBot_ #Heal
 
 
-@_SlayerBot_ #Heal
-Damage
 
-	* 
-Permanently increases damage
+**Damage**
 
-
-@_SlayerBot_ #Damage
-Cape
-
-	* 
-Permanently increases dodge chance
+	*Permanently increases max damage by 5 points
+	*@_SlayerBot_ #Damage
 
 
-@_SlayerBot_ #Cape
-Armor
 
-	* 
-Permanently increases armor
+**Cape**
+
+	*Permanently increases dodge chance by 2%
+	*@_SlayerBot_ #Cape
 
 
-@_SlayerBot_ #Armor
+
+**Armor**
+
+	* Permanently increases damage absorption by 2%
+	*@_SlayerBot_ #Armor
+
+
 

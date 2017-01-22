@@ -14,7 +14,7 @@ Each class has a unique set of strengths and weaknesses that synergize when pair
 
 ![alt tag](/Resources/Images/Class Icons/Knight.png) **Knight:**
 
-	Tank
+	*Tank*
 	Decent damage [70-170]
 	High armor [20% damage absorbed]
 	
@@ -27,7 +27,7 @@ Actions:
 
 ![alt tag](/Resources/Images/Class Icons/Archer.png) **Archer:**
 
-	Trash
+	*Trash*
 	Trash damage [50-120]	
 	High dodge chance [10%]
 	No armor
@@ -46,7 +46,7 @@ Actions:
 
 ![alt tag](/Resources/Images/Class Icons/Mage.png)  **Mage:**
 
-	Glass Cannon
+	*Glass Cannon*
 	Heal [30% of own HP]
 	High Damage [90-220]
 

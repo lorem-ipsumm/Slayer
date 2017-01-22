@@ -25,7 +25,8 @@ Each class has a unique set of strengths and weaknesses that synergize when pair
 	
 **Actions:**
 	
-	To be determined
+
+To be determined
 	
 
 
@@ -35,7 +36,8 @@ Each class has a unique set of strengths and weaknesses that synergize when pair
 	Trash
 	Weak damage [50-120]	
 	High dodge chance [10%]
-	No armor
+
+No armor
 
 
 
@@ -43,6 +45,7 @@ Each class has a unique set of strengths and weaknesses that synergize when pair
 	
 	Self Heal: Heal 20% of max health to yourself
 		Command: @_SlayerBot_ #heal @[yourname]
+
 
 
 
@@ -67,6 +70,11 @@ Each class has a unique set of strengths and weaknesses that synergize when pair
 
 
 ##Items
+
+Each player has a 10% chance (percentage may vary) of getting a random item every attack cycle
+Each player has four inventory spaces
+If the inventory is full and another item is obtained the oldest item in the inventory is removed
+
 **Heal**
 
 	Increases current health by 20% of max HP

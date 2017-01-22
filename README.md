@@ -16,10 +16,11 @@ Each class has a unique set of strengths and weaknesses that synergize when pair
 	* Tank
 	* Decent damage [70-170]
 	* 
+Actions:
 High armor [20% damage absorbed]
 
 
-Actions:
+
 ![alt tag](/Resources/Images/Class Icons/Archer.png) Archer:
 
 	* Trash

@@ -10,6 +10,7 @@ To join a game, simply tweet:
 
 Classes
 Each class has a unique set of strengths and weaknesses that synergize when paired with the other classes.
+
 ![alt tag](/Resources/Images/Class Icons/Knight.png) Knight:
 
 	* Tank
@@ -19,7 +20,7 @@ High armor [20% damage absorbed]
 
 
 Actions:
-[logo] Archer:
+![alt tag](/Resources/Images/Class Icons/Archer.png) Archer:
 
 	* Trash
 	* Trash damage [50-120]
@@ -40,7 +41,7 @@ Self-heal
 
 
 
-[logo] Mage:
+![alt tag](/Resources/Images/Class Icons/Mage.png)  Mage:
 
 	* Glass Cannon
 	* Heal [30% of own HP]

@@ -28,7 +28,8 @@ Actions:
 ![alt tag](/Resources/Images/Class Icons/Archer.png) **Archer:**
 
 	Trash
-	Trash damage [50-120]	* High dodge chance [10%]
+	Trash damage [50-120]	
+	High dodge chance [10%]
 	No armor
 	Miss chance?
 	Self-heal [range]

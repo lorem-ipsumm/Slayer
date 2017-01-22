@@ -32,14 +32,14 @@ Actions:
 	High dodge chance [10%]
 	No armor
 	Miss chance?
-	Self-heal [range]
 
 
 
 
 Actions:
-
-	To be determined
+	
+	Self Heal
+		Command: @_SlayerBot_ #heal @[yourname]
 
 
 

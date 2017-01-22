@@ -26,7 +26,7 @@ Each class has a unique set of strengths and weaknesses that synergize when pair
 **Actions:**
 	
 
-To be determined
+	To be determined
 	
 	
 

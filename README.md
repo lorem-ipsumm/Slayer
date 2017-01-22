@@ -36,7 +36,7 @@ Each class has a unique set of strengths and weaknesses that synergize when pair
 
 **Actions:**
 	
-	Self Heal
+	Self Heal: Heal 20% of max health to yourself
 		Command: @_SlayerBot_ #heal @[yourname]
 
 
@@ -50,8 +50,10 @@ Each class has a unique set of strengths and weaknesses that synergize when pair
 
 **Actions**
 
-	Heal
+	Heal: Heal 20% of max health to anyone
 		Command: @_SlayerBot_ #heal @[playername]
+	Self heal: Heal 30% of max health to yourself
+		Command: @_SlayerBot_ #heal @[yourname]
 
 
 

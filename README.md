@@ -33,7 +33,7 @@ High armor [20% damage absorbed]
 
 
 
->Actions:
+Actions:
 
 	* 
 Self-heal
@@ -61,28 +61,28 @@ Heal
 **Heal**
 
 	*Increases current health by 20% of max HP
-	*>@_SlayerBot_ #Heal
+	*Command: @_SlayerBot_ #Heal
 
 
 
 **Damage**
 
 	*Permanently increases max damage by 5 points
-	*@_SlayerBot_ #Damage
+	*Command: @_SlayerBot_ #Damage
 
 
 
 **Cape**
 
 	*Permanently increases dodge chance by 2%
-	*@_SlayerBot_ #Cape
+	*Command: @_SlayerBot_ #Cape
 
 
 
 **Armor**
 
 	* Permanently increases damage absorption by 2%
-	*@_SlayerBot_ #Armor
+	*Command: @_SlayerBot_ #Armor
 
 
 

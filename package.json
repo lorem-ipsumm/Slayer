@@ -1,0 +1,21 @@
+{
+  "name": "slayer",
+  "version": "1.0.0",
+  "description": "A twitter bot that automates an interactive twitter game",
+  "main": "index.js",
+  "dependencies": {
+    "canvas": "^1.6.2",
+    "twit": "^2.2.5"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "twitter",
+    "game",
+    "dragonchan"
+  ],
+  "author": "Nicholas Morris",
+  "license": "GPL-3.0"
+}

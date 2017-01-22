@@ -49,7 +49,7 @@ Actions:
 	Heal [30% of own HP]
 	High Damage [90-220]
 
-Actions
+Actions:
 
 	Heal
 		Command: @_SlayerBot_ #heal @[playername]

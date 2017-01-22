@@ -37,7 +37,6 @@ Each class has a unique set of strengths and weaknesses that synergize when pair
 	Weak damage [50-120]	
 	High dodge chance [10%]
 
-No armor
 
 
 
@@ -52,9 +51,9 @@ No armor
 
 >![alt tag](/Resources/Images/Class Icons/Mage.png)  **Mage:**
 
-	Glass Cannon
-	Heal [30% of own HP]
+	Glass Cannon	
 	High Damage [90-220]
+	Low Dodge Chance [1%]
 
 **Actions**
 

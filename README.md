@@ -33,7 +33,7 @@ High armor [20% damage absorbed]
 
 
 
-Actions:
+>Actions:
 
 	* 
 Self-heal
@@ -61,7 +61,7 @@ Heal
 **Heal**
 
 	*Increases current health by 20% of max HP
-	*@_SlayerBot_ #Heal
+	*>@_SlayerBot_ #Heal
 
 
 

@@ -10,7 +10,7 @@ To join a game, simply tweet:
 
 Classes
 Each class has a unique set of strengths and weaknesses that synergize when paired with the other classes.
-[logo] Knight:
+![alt tag](/resources/Images/Class Icons/Knight.PNG) Knight:
 
 	* Tank
 	* Decent damage [70-170]

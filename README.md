@@ -4,8 +4,12 @@ Slayer is a Twitter game that allows anyone with an account to play. Every hour 
 
 
 >Joining a game
-To join a game, simply tweet:
-@_SlayerBot_ #JoinGame
+
+	To join a game, simply tweet:
+	@_SlayerBot_ #JoinGame
+	
+	There is a 10 player max at the moment
+	There is no way to check if the game is full at the moment, so try to be as fast as you can to join the game
 
 
 Classes

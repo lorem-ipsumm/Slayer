@@ -59,10 +59,8 @@ Heal
 
 
 ##Items
-Heal
-
-	* 
-Increases current health by 20% of max HP
+	*Heal
+	*Increases current health by 20% of max HP
 
 
 @_SlayerBot_ #Heal

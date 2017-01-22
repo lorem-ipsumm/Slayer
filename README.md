@@ -75,28 +75,28 @@ No armor
 	Each player has four inventory spaces
 	If the inventory is full and another item is obtained the oldest item in the inventory is removed
 
-**Heal**
+>[H] **Heal**
 
 	Increases current health by 20% of max HP
 	Command: @_SlayerBot_ #Heal
 
 
 
-**Damage**
+>[D] **Damage**
 
 	Permanently increases max damage by 5 points
 	Command: @_SlayerBot_ #Damage
 
 
 
-**Cape**
+>[C] **Cape**
 
 	Permanently increases dodge chance by 2%
 	Command: @_SlayerBot_ #Cape
 
 
 
-**Armor**
+>[A] **Armor**
 
 	Permanently increases damage absorption by 2%
 	Command: @_SlayerBot_ #Armor

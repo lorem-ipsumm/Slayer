@@ -28,7 +28,7 @@ Each class has a unique set of strengths and weaknesses that synergize when pair
 
 To be determined
 	
-
+	
 
 
 >![alt tag](/Resources/Images/Class Icons/Archer.png) **Archer:**
@@ -71,9 +71,9 @@ No armor
 
 ##Items
 
-Each player has a 10% chance (percentage may vary) of getting a random item every attack cycle
-Each player has four inventory spaces
-If the inventory is full and another item is obtained the oldest item in the inventory is removed
+	Each player has a 10% chance (percentage may vary) of getting a random item every attack cycle
+	Each player has four inventory spaces
+	If the inventory is full and another item is obtained the oldest item in the inventory is removed
 
 **Heal**
 

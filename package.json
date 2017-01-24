@@ -4,7 +4,8 @@
   "description": "A twitter bot that automates an interactive twitter game",
   "main": "index.js",
   "engines": {
-    "node": "6.9.4"
+    "node": "6.9.4",
+    "npm": "3.10.10"
   },
   "dependencies": {
     "canvas": "^1.6.2",

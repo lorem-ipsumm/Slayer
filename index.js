@@ -740,6 +740,7 @@ function basicTweet(message){
 
 
 
+
 startGame();
 //boss = new Omega("Omega Giant",players.length * 3500);
 //tweetGame();

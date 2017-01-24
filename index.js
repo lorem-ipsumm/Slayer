@@ -19,11 +19,12 @@ var bosses = ["Omega","Nexus","Osiris"];
 var players = [];
 var gameRunning = false;
 var tweetStream;
-var playerLimit = 10;
+var playerLimit = 2;
 
 //In minutes
 var waitTime = 5;
 var cycleTime = 1;
+var gameOffTime = 60;
 
 var random = Math.floor((Math.random() * 1000) + 1);
 var waitingTimer;
@@ -55,7 +56,7 @@ function startGame(){
   //Reset game variables
   players = [];
   imageMessages = [];
-  randomPlayerMaker(9);
+  //randomPlayerMaker(2);
   var status = "You can look at the rules, code, and commands at: https://github.com/SolarFloss/Slayer";
 
   context.drawImage(startingBackground,0,0);
@@ -87,6 +88,7 @@ function startGame(){
   console.log("Waiting for people to join");
   waitingTimer = setTimeout(intermissionOver,60000*waitTime);
 
+
 }
 
 
@@ -94,17 +96,32 @@ function startGame(){
 
 //When the intermession is over
 function intermissionOver(limit){
-  //basicTweet(message);
-  gameRunning = true;
+  if(limit){
+    //basicTweet(message);
+    gameRunning = true;
 
-  //Just Omega for now
-  boss = new Omega("Omega Giant",players.length * 3500);
+    //Just Omega for now
+    boss = new Omega("Omega Giant",players.length * 3500);
 
-  cycles = 0;
-  tweetGame();
-  setTimeout(attackCycle,30000);
-  //tweetStream = T.stream('user');
-  //tweetStream.on('tweet',tweetEvent);
+    cycles = 0;
+    tweetGame();
+    setTimeout(attackCycle,60000*waitTime);
+    //tweetStream = T.stream('user');
+    //tweetStream.on('tweet',tweetEvent);
+  }else{
+    if(players[i].length != 0){
+      gameRunning = true;
+
+      //Just Omega for now
+      boss = new Omega("Omega Giant",players.length * 3500);
+
+      cycles = 0;
+      tweetGame();
+      setTimeout(attackCycle,60000*waitTime);
+    }else{
+      setTimeout(startGame,60000*gameOffTime);
+    }
+  }
 }
 
 function bossInfo(){
@@ -319,7 +336,7 @@ function tweetCycle(){
     var pHealth = players[i].health;
     var pMaxHealth = players[i].maxHealth;
     var inventorySpacingX = 600;
-    var itemChance = .10;
+    var itemChance = .50;
 
     //Item Giving
     if(Math.random() < itemChance){
@@ -357,7 +374,7 @@ function tweetCycle(){
         context.fillStyle = "green";
         context.font = "15px Arial";
         var healthInfo = players[i].selfHeal();
-        context.fillText(healInfo + " HP " + players[i].name.substring(0,11)),565 - context.measureText(healInfo + " HP " + players[i].name.substring(0,11)).width,ySpacing + 17);
+        context.fillText(healInfo + " HP " + players[i].name.substring(0,11),565 - context.measureText(healInfo + " HP " + players[i].name.substring(0,11)).width,ySpacing + 17);
 
         players[i].action = "hit";
         players[i].target = "";
@@ -366,14 +383,14 @@ function tweetCycle(){
         context.fillStyle = "black";
         context.font = "15px Arial";
         players[i].absorb += .02;
-        context.fillText("Dmg Absorption: " + players[i].absorb + "%",565 - context.measureText("Dmg Absorption: " + players[i].absorb + "%").width,ySpacing + 17);
+        context.fillText("Dmg Absorption: " + players[i].absorb * 100 + "%",565 - context.measureText("Dmg Absorption: " + players[i].absorb + "%").width,ySpacing + 17);
         players[i].action = "hit";
         break;
       case "cape":
         context.fillStyle = "black";
         context.font = "15px Arial";
         players[i].dodgeChance += .02;
-        context.fillText("Dodge Chance: " + players[i].dodgeChance + "%",565 - context.measureText("Dodge Chance:" + players[i].dodgeChance + "%").width,ySpacing + 17);
+        context.fillText("Dodge Chance: " + players[i].dodgeChance * 100 + "%",565 - context.measureText("Dodge Chance:" + players[i].dodgeChance + "%").width,ySpacing + 17);
         players[i].action = "hit";
         break;
       case "damage":
@@ -504,8 +521,6 @@ function tweetCycle(){
       }
     });
   });
-
-
 }
 
 //Attack Cycle Function is cool buddy
@@ -548,8 +563,8 @@ function tweetEvent(event){
     //Make sure they are joining the game, and haven't already joined
     if((message.toUpperCase().indexOf("#JOINGAME") > -1) && checkPlayerArray("@" + user)){
       //Add player to list, and give them a class
-      //var chosenClass = playerClasses[Math.floor(Math.random()*playerClasses.length)];
-      var chosenClass = "Mage";
+      var chosenClass = playerClasses[Math.floor(Math.random()*playerClasses.length)];
+      //var chosenClass = "Mage";
       var newClass;
 
       switch (chosenClass) {
@@ -584,6 +599,7 @@ function tweetEvent(event){
             if(player.name == target.name){
               if(player.getPlayerType() != "Knight"){
                 player.action = "self heal"
+                player.target = target;
               }
             }else{
               if(player.getPlayerType() == "Mage"){
@@ -597,8 +613,10 @@ function tweetEvent(event){
           if(player.inventory.indexOf("Health") != -1 && player.action != "heal"){
             player.action = "heal";
             player.target = player;
+            var found = false;
             for(var i = 0; i < player.inventory.length;i++){
-              if(player.inventory[i] == "Health"){
+              if(player.inventory[i] == "Health" && !found){
+                found = true;
                 player.inventory.push("");
                 player.inventory.splice(i,1);
               }
@@ -611,8 +629,10 @@ function tweetEvent(event){
         var player = getPlayer("@" + user);
         if(player.inventory.indexOf("Armor") != -1 && player.action != "armor"){
           player.action = "armor"
+          var found = false;
           for(var i = 0; i < player.inventory.length;i++){
-            if(player.inventory[i] == "Armor"){
+            if(player.inventory[i] == "Armor" && !found){
+              found = true;
               player.inventory.push("");
               player.inventory.splice(i,1);
             }
@@ -623,9 +643,10 @@ function tweetEvent(event){
       if(!checkPlayerArray("@" + user)){
         var player = getPlayer("@" + user);
         if(player.inventory.indexOf("Cape") != -1 && player.action != "cape"){
+          var found = false;
           player.action = "cape"
           for(var i = 0; i < player.inventory.length;i++){
-            if(player.inventory[i] == "Cape"){
+            if(player.inventory[i] == "Cape" && !found){
               player.inventory.push("");
               player.inventory.splice(i,1);
             }
@@ -638,7 +659,8 @@ function tweetEvent(event){
         if(player.inventory.indexOf("Damage") != -1 && player.action != "damage"){
           player.action = "damage"
           for(var i = 0; i < player.inventory.length;i++){
-            if(player.inventory[i] == "Damage"){
+            if(player.inventory[i] == "Damage" && !found){
+              found = true;
               player.inventory.push("");
               player.inventory.splice(i,1);
             }
@@ -718,6 +740,6 @@ function basicTweet(message){
 
 
 
-startGame();
+//startGame();
 //boss = new Omega("Omega Giant",players.length * 3500);
 //tweetGame();

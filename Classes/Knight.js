@@ -10,6 +10,7 @@ class Knight{
     this.dodgeChance = .03;
     this.absorb = .20;
     this.items = ["Armor","Health","Cape","Damage"];
+    this.specialAttacks = ["Burst"];
     this.target = "";
   }
 
@@ -34,6 +35,8 @@ class Knight{
     }
     return fDamage;
   }
+
+
 
   heal(){
     var num = Math.floor(this.target.maxHealth * .2);

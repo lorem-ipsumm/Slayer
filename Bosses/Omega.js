@@ -23,6 +23,8 @@ class Omega{
       info = player.attacked(Math.floor(Math.random()*((max * 2)-(min+1))+min));
     }
 
+    this.maxDamage += 5;
+
     return info;
   }
 

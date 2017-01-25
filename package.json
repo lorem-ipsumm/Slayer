@@ -8,8 +8,7 @@
     "npm": "3.10.10"
   },
   "dependencies": {
-    "canvas": "^1.6.2",
-    "twit": "^2.2.5"
+
   },
   "devDependencies": {},
   "scripts": {

@@ -8,10 +8,12 @@
     "npm": "3.10.10"
   },
   "dependencies": {
-    "canvas": "^1.6.2",
+    "canvas": "git://github.com/elspoono/node-canvas-heroku.git",
     "twit": "^2.2.5"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "canvas": "^1.6.2"
+  },
   "scripts": {
     "start": "node index.js"
   },

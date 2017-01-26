@@ -7,7 +7,7 @@ Slayer is a Twitter game that allows anyone with an account to play. Every hour 
 
 	To join a game, simply tweet:
 	@_SlayerBot_ #JoinGame
-	
+
 	There is a 10 player max at the moment
 	There is no way to check if the game is full at the moment, so try to be as fast as you can to join the game
 
@@ -22,26 +22,26 @@ Each class has a unique set of strengths and weaknesses that synergize when pair
 	Tank
 	Decent damage [70-170]
 	High armor [20% damage absorbed]
-	
+
 **Actions:**
-	
+
 
 	To be determined
-	
-	
+
+
 
 
 >![alt tag](/Resources/Images/Class Icons/Archer.png) **Archer:**
 
 	Trash
-	Weak damage [50-120]	
+	Weak damage [50-120]
 	High dodge chance [10%]
 
 
 
 
 **Actions:**
-	
+
 	Self Heal: Heal 20% of max health to yourself
 		Command: @_SlayerBot_ #heal @[yourname]
 
@@ -51,7 +51,7 @@ Each class has a unique set of strengths and weaknesses that synergize when pair
 
 >![alt tag](/Resources/Images/Class Icons/Mage.png)  **Mage:**
 
-	Glass Cannon	
+	Glass Cannon
 	High Damage [90-220]
 	Low Dodge Chance [1%]
 
@@ -59,8 +59,8 @@ Each class has a unique set of strengths and weaknesses that synergize when pair
 
 	Heal: Heal 20% of max health to anyone
 		Command: @_SlayerBot_ #heal @[playername]
-		
-		
+
+
 	Self heal: Heal 30% of max health to yourself
 		Command: @_SlayerBot_ #heal @[yourname]
 
@@ -99,6 +99,3 @@ Each class has a unique set of strengths and weaknesses that synergize when pair
 
 	Permanently increases damage absorption by 2%
 	Command: @_SlayerBot_ #Armor
-
-
-

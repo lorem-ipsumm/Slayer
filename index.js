@@ -19,7 +19,7 @@ var bosses = ["Omega","Nexus","Osiris"];
 var players = [];
 var gameRunning = false;
 var tweetStream;
-var playerLimit = 2;
+var playerLimit = 10;
 
 //In minutes
 var waitTime = 5;
@@ -56,7 +56,7 @@ function startGame(){
   //Reset game variables
   players = [];
   imageMessages = [];
-  //randomPlayerMaker(2);
+  randomPlayerMaker(9);
   var status = "You can look at the rules, code, and commands at: https://github.com/SolarFloss/Slayer";
 
   context.drawImage(startingBackground,0,0);

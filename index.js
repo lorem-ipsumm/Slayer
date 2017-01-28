@@ -119,6 +119,9 @@ function intermissionOver(limit){
       tweetGame();
       setTimeout(attackCycle,60000*waitTime);
     }else{
+      T.post('statuses/update', { status: 'Not enough players. Starting again in 60 minutes' }, function(err, data, response) {
+        console.log(data)
+      })
       setTimeout(startGame,60000*gameOffTime);
     }
   }
@@ -538,7 +541,10 @@ function attackCycle(){
       tweetStream.on('tweet',tweetEvent);
     }else{
       gameRunning = false;
+      setTimeout(startGame,60000*gameOffTime);
     }
+  }else{
+    setTimeout(startGame,60000*gameOffTime);
   }
 }
 
@@ -717,7 +723,7 @@ function checkPlayerArray(name){
 
 //Prints arrays
 function printPlayerArray(array){
-  for(var i = 0;i < array.length;i++){
+  for(var i = 0;i < array.length;i++){``
     console.log(array[i].name + "/" + array[i].getPlayerType());
   }
 }

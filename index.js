@@ -71,9 +71,9 @@ function startGame(){
   context.font = "30px Arial";
   context.fillText(playerLimit,505,775);
   var fs = require('fs')
-  var out = fs.createWriteStream('./Resources/Output Images/StartingOutput.png');
+  //var out = fs.createWriteStream('./Resources/Output Images/StartingOutput.png');
   var stream = canvas.pngStream();
-  var dataUrl = stream.pipe(out);
+  //var dataUrl = stream.pipe(out);
 
 
   T.post('media/upload',{media_data: canvas.toBuffer().toString('base64')},function(err,data,response){
@@ -254,9 +254,9 @@ function tweetGame(){
 
 function drawCycle(){
   var fs = require('fs')
-  var out = fs.createWriteStream('./Resources/Output Images/CycleOutput.png');
+  //var out = fs.createWriteStream('./Resources/Output Images/CycleOutput.png');
   var stream = canvas.pngStream();
-  var dataUrl = stream.pipe(out);
+  //var dataUrl = stream.pipe(out);
 
   //Uploading the image to twitter first
   T.post('media/upload',{media_data: canvas.toBuffer().toString('base64')},function(err,data,response){
@@ -504,9 +504,9 @@ function tweetCycle(){
 
 
   var fs = require('fs')
-  var out = fs.createWriteStream('./Resources/Output Images/CycleOutput.png');
+  //var out = fs.createWriteStream('./Resources/Output Images/CycleOutput.png');
   var stream = canvas.pngStream();
-  var dataUrl = stream.pipe(out);
+  //var dataUrl = stream.pipe(out);
 
   //Uploading the image to twitter first
 

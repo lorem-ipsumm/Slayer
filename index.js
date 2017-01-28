@@ -22,7 +22,7 @@ var tweetStream;
 var playerLimit = 10;
 
 //In minutes
-var waitTime = 5;
+var waitTime = .10;
 var cycleTime = 1;
 var gameOffTime = 60;
 
@@ -53,6 +53,9 @@ knightIcon.src = "./Resources/Images/Class Icons/Knight.png";
 
 //Beginning the game
 function startGame(){
+  console.log("Starting new game");
+
+
   //Reset game variables just in case
   players = [];
   imageMessages = [];
@@ -62,9 +65,12 @@ function startGame(){
     tweetStream.stop();
 
 
-  var currentDate = new Date();
-  var currentTime = ("[" + currentDate.getHours() + ":" + currentDate.getMinutes() + ":" + currentDate.getSeconds() + "]");
+
+  var currentTime = getFormattedTime();
+
+
   var status = currentTime + "  You can look at the rules, code, and commands at: https://github.com/SolarFloss/Slayer";
+  console.log(currentTime);
 
   context.drawImage(startingBackground,0,0);
   context.fillStyle = "black";
@@ -97,13 +103,33 @@ function startGame(){
 }
 
 
+function getFormattedTime(){
+  var currentDate = new Date();
+
+  var hours = currentDate.getHours();
+  var minutes = currentDate.getMinutes();
+  var seconds = currentDate.getSeconds();
+
+  if(hours < 10){
+    hours = "0" + hours;
+  }else if(minutes < 10){
+    minutes = "0" + minutes;
+  }else if(seconds < 10){
+    seconds = "0" + seconds;
+  }
+
+  return("[" + hours + ":" + minutes + ":" + seconds + "]");
+}
+
 
 
 //When the intermession is over
-function intermissionOver(limit){
+function intermissionOver(){
+  console.log("Intermission is over");
   clearTimeout(waitingTimer);
-  if(tweetStream != null)
+  if(tweetStream != null){
     tweetStream.stop();
+  }
 
   if(players.length > 0){
     gameRunning = true;
@@ -118,10 +144,12 @@ function intermissionOver(limit){
     tweetGame();
     setTimeout(attackCycle,60000*waitTime);
   }else{
+    console.log("Not enough players");
     gameRunning = false;
-    T.post('statuses/update', { status: 'Not enough players. Starting again in 60 minutes' }, function(err, data, response) {
-       console.log(data)
-    })
+    T.post('statuses/update', { status:getFormattedTime() +  ' Not enough players. Starting again in 60 minutes' }, function(err, data, response) {
+      if(err)
+       console.log(err);
+    });
     setTimeout(startGame,60000*gameOffTime);
   }
 }
@@ -590,7 +618,7 @@ function tweetEvent(event){
         console.log("Limit reached");
         tweetStream.stop();
         clearTimeout(waitingTimer);
-        intermissionOver(true);
+        intermissionOver();
       }
     //Differentiate between "Heal" and "Health"
     }else if(message.toUpperCase().indexOf("#HEAL") != -1 && gameRunning){

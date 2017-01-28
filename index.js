@@ -261,7 +261,7 @@ function drawCycle(){
     //console.log("uploaded");
     var mediaIdStr = data.media_id_string;
     //TODO: Add cycle number to status
-    var params = {status: "Test game with fake players. Cycle #" + cycles, media_ids: [mediaIdStr]}
+    var params = {status: "Game starting in 5 minutes! Cycle #" + cycles, media_ids: [mediaIdStr]}
 
     //upload tweet with new image
     T.post('statuses/update', params, function(err, data, response){

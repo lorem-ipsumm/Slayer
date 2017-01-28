@@ -53,11 +53,18 @@ knightIcon.src = "./Resources/Images/Class Icons/Knight.png";
 
 //Beginning the game
 function startGame(){
-  //Reset game variables
+  //Reset game variables just in case
   players = [];
   imageMessages = [];
-  randomPlayerMaker(9);
-  var status = "You can look at the rules, code, and commands at: https://github.com/SolarFloss/Slayer";
+  gameRunning = false;
+  clearTimeout(waitingTimer);
+  if(tweetStream != null)
+    tweetStream.stop();
+
+
+  var currentDate = new Date();
+  var currentTime = ("[" + currentDate.getHours() + ":" + currentDate.getMinutes() + ":" + currentDate.getSeconds() + "]");
+  var status = currentTime + "  You can look at the rules, code, and commands at: https://github.com/SolarFloss/Slayer";
 
   context.drawImage(startingBackground,0,0);
   context.fillStyle = "black";
@@ -87,8 +94,6 @@ function startGame(){
   tweetStream.on('tweet',tweetEvent);
   console.log("Waiting for people to join");
   waitingTimer = setTimeout(intermissionOver,60000*waitTime);
-
-
 }
 
 
@@ -96,9 +101,15 @@ function startGame(){
 
 //When the intermession is over
 function intermissionOver(limit){
-  if(limit){
-    //basicTweet(message);
+  clearTimeout(waitingTimer);
+  if(tweetStream != null)
+    tweetStream.stop();
+
+  if(players.length > 0){
     gameRunning = true;
+
+    //Fill open spots with computers
+    randomPlayerMaker(playerLimit - players.length);
 
     //Just Omega for now
     boss = new Omega("Omega Giant",players.length * 3500);
@@ -106,24 +117,12 @@ function intermissionOver(limit){
     cycles = 0;
     tweetGame();
     setTimeout(attackCycle,60000*waitTime);
-    //tweetStream = T.stream('user');
-    //tweetStream.on('tweet',tweetEvent);
   }else{
-    if(players[i].length != 0){
-      gameRunning = true;
-
-      //Just Omega for now
-      boss = new Omega("Omega Giant",players.length * 3500);
-
-      cycles = 0;
-      tweetGame();
-      setTimeout(attackCycle,60000*waitTime);
-    }else{
-      T.post('statuses/update', { status: 'Not enough players. Starting again in 60 minutes' }, function(err, data, response) {
-        console.log(data)
-      })
-      setTimeout(startGame,60000*gameOffTime);
-    }
+    gameRunning = false;
+    T.post('statuses/update', { status: 'Not enough players. Starting again in 60 minutes' }, function(err, data, response) {
+       console.log(data)
+    })
+    setTimeout(startGame,60000*gameOffTime);
   }
 }
 
@@ -210,7 +209,7 @@ function playerInfo(){
 
 
     //Health bars
-    //The pixel space is 120 pixels
+    //The pixel space is 115 pixels
     var pHealth = players[i].health;
     var pMaxHealth = players[i].maxHealth;
     context.beginPath();
@@ -222,7 +221,7 @@ function playerInfo(){
     }else{
       context.fillStyle = "red";
     }
-    context.rect(226,ySpacing + 7,(pHealth * 120)/pMaxHealth,10);
+    context.rect(226,ySpacing + 7,(pHealth * 115)/pMaxHealth,10);
     context.fill();
 
 
@@ -526,7 +525,7 @@ function tweetCycle(){
   });
 }
 
-//Attack Cycle Function is cool buddy
+//Attack Cycle Function
 function attackCycle(){
   if(gameRunning){
     cycles++;
@@ -544,6 +543,7 @@ function attackCycle(){
       setTimeout(startGame,60000*gameOffTime);
     }
   }else{
+    tweetStream.stop();
     setTimeout(startGame,60000*gameOffTime);
   }
 }
@@ -567,7 +567,7 @@ function tweetEvent(event){
   //If the tweet was directed at the bot
   if(receipent == "_SlayerBot_"){
     //Make sure they are joining the game, and haven't already joined
-    if((message.toUpperCase().indexOf("#JOINGAME") > -1) && checkPlayerArray("@" + user)){
+    if((message.toUpperCase().indexOf("#JOINGAME") != -1) && checkPlayerArray("@" + user) && !gameRunning){
       //Add player to list, and give them a class
       var chosenClass = playerClasses[Math.floor(Math.random()*playerClasses.length)];
       //var chosenClass = "Mage";

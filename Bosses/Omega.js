@@ -7,6 +7,7 @@ class Omega{
     this.minDamage = 0;
     this.maxDamage = 50;
     this.critChance = .05;
+    this.count = 0;
   }
 
   attack(player){
@@ -22,8 +23,6 @@ class Omega{
     }else{
       info = player.attacked(Math.floor(Math.random()*((max * 2)-(min+1))+min));
     }
-
-    //this.maxDamage += 5;
 
     return info;
   }

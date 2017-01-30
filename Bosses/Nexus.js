@@ -7,6 +7,7 @@ class Nexus{
     this.minDamage = 0;
     this.maxDamage = 50;
     this.critChance = .05;
+    this.count = 0;
   }
 
   attack(player){
@@ -14,12 +15,23 @@ class Nexus{
     //Range is Math.floor(Math.random()*(max-min+1)+min)
     var max = this.maxDamage;
     var min = this.minDamage;
+    var info;
 
     if(Math.random() > this.critChance){
-      player.attacked(Math.floor(Math.random()*(max-min+1)+min));
+      //Info returns how much damage the player actually took from the attack
+      info = player.attacked(Math.floor(Math.random()*(max-min+1)+min));
     }else{
-      player.attacked(Math.floor(Math.random()*((max * 2)-(min+1))+min));
+      info = player.attacked(Math.floor(Math.random()*((max * 2)-(min+1))+min));
     }
+
+    if(this.count >= 20){
+      this.maxDamage += 5;
+    }
+
+
+
+    this.count += 1;
+    return info;
   }
 
   getBossType(){

@@ -10,8 +10,9 @@ class Knight{
     this.dodgeChance = .03;
     this.absorb = .20;
     this.items = ["Armor","Health","Cape","Damage"];
-    this.specialAttacks = ["Burst"];
+    this.mode = "normal";
     this.target = "";
+    this.cooldown = 0;
   }
 
   attack(){

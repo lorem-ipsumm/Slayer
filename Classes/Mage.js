@@ -11,6 +11,8 @@ class Mage{
     this.absorb = 0;
     this.items = ["Armor","Health","Cape","Damage"];
     this.target = "";
+    this.mode = "normal";
+    this.cooldown = 0;
   }
 
   attack(){

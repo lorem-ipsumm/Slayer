@@ -11,6 +11,8 @@ class Archer{
     this.absorb = 0;
     this.items = ["Armor","Health","Cape","Damage"];
     this.target = "";
+    this.mode = "normal";
+    this.cooldown = 0;
   }
 
   attack(){
@@ -55,6 +57,35 @@ class Archer{
       this.health = this.maxHealth;
       return num;
     }
+  }
+
+  cooldown(){
+
+  }
+
+  handleRage(){
+    if(this.cooldown < 4){
+      this.inventory[this.cooldown] = "";
+    }
+    this.cooldown -= 1;
+    if(this.cooldown < 0){
+      this.action = "hit";
+      this.inventory = ["","","",""];
+      this.maxDamage -= 100;
+      this.dodgeChance -= .1;
+      this.cooldown = 0;
+      this.mode = "normal";
+      console.log("rage over");
+    }
+  }
+
+
+  rage(){
+    this.inventory = ["R","A","G","E"];
+    this.maxDamage += 100;
+    this.dodgeChance += .1;
+    this.cooldown = 5;
+    this.mode = "rage";
   }
 
   giveItem(){

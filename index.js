@@ -22,8 +22,8 @@ var tweetStream;
 var playerLimit = 10;
 
 //In minutes
-var waitTime = .10;
-var cycleTime = 1;
+var waitTime = 1;
+var cycleTime = 1.5;
 var gameOffTime = 60;
 
 var random = Math.floor((Math.random() * 1000) + 1);
@@ -50,6 +50,8 @@ archerIcon.src = "./Resources/Images/Class Icons/Archer.png";
 mageIcon.src = "./Resources/Images/Class Icons/Mage.png";
 knightIcon.src = "./Resources/Images/Class Icons/Knight.png";
 
+var textWidth = 575;
+
 
 //Beginning the game
 function startGame(){
@@ -75,7 +77,10 @@ function startGame(){
   context.drawImage(startingBackground,0,0);
   context.fillStyle = "black";
   context.font = "30px Arial";
-  context.fillText(playerLimit,505,775);
+  if(playerLimit < 10)
+    playerLimit = "0" + playerLimit;
+
+  context.fillText(playerLimit,495,775);
   var fs = require('fs')
   //var out = fs.createWriteStream('./Resources/Output Images/StartingOutput.png');
   var stream = canvas.pngStream();
@@ -112,9 +117,11 @@ function getFormattedTime(){
 
   if(hours < 10){
     hours = "0" + hours;
-  }else if(minutes < 10){
+  }
+  if(minutes < 10){
     minutes = "0" + minutes;
-  }else if(seconds < 10){
+  }
+  if(seconds < 10){
     seconds = "0" + seconds;
   }
 
@@ -127,9 +134,9 @@ function getFormattedTime(){
 function intermissionOver(){
   console.log("Intermission is over");
   clearTimeout(waitingTimer);
-  if(tweetStream != null){
+  if(tweetStream != null)
     tweetStream.stop();
-  }
+
 
   if(players.length > 0){
     gameRunning = true;
@@ -142,7 +149,7 @@ function intermissionOver(){
 
     cycles = 0;
     tweetGame();
-    setTimeout(attackCycle,60000*waitTime);
+    setTimeout(attackCycle,60000*1);
   }else{
     console.log("Not enough players");
     gameRunning = false;
@@ -167,7 +174,7 @@ function bossInfo(){
   //Boss name
   context.fillStyle = "black";
   context.font = "100px Arial";
-  context.fillText(bossName,(canvas.width/2) - (context.measureText(bossName).width/2),90);
+  context.fillText(bossName.toUpperCase(),(canvas.width/2) - (context.measureText(bossName).width/2),90);
 
   //Boss info box
   context.fillStyle = "black";
@@ -190,8 +197,6 @@ function bossInfo(){
   context.fillText(bossHealth + "/" + bossMaxHealth,(canvas.width)/2 - (context.measureText(bossHealth + "/" + bossMaxHealth).width/2),160);
   context.strokeStyle = "black";
   context.strokeText(bossHealth + "/" + bossMaxHealth,(canvas.width)/2 - (context.measureText(bossHealth + "/" + bossMaxHealth).width/2),160);
-
-
 }
 
 
@@ -233,7 +238,7 @@ function playerInfo(){
     //Player name
     context.font = "15px Arial";
     context.fillStyle = "black";
-    context.fillText(players[i].name.substring(0,11),115,ySpacing + 15);
+    context.fillText(players[i].name.substring(0,11),110,ySpacing + 15);
 
 
     //Health bars
@@ -366,12 +371,14 @@ function tweetCycle(){
     var pHealth = players[i].health;
     var pMaxHealth = players[i].maxHealth;
     var inventorySpacingX = 600;
-    var itemChance = .50;
+    var itemChance = .20;
 
     //Item Giving
-    if(Math.random() < itemChance){
+    if(Math.random() < itemChance && players[i].mode == "normal"){
       players[i].giveItem();
     }
+
+
 
     switch(players[i].action){
       case "hit":
@@ -380,12 +387,12 @@ function tweetCycle(){
           context.fillStyle = "red";
           context.font = "15px Arial";
           attackDamage = players[i].attack();
-          context.fillText(attackDamage + " damage @" + bossName,565 - context.measureText(attackDamage + " damage @" + bossName).width,ySpacing + 17);
+          context.fillText(attackDamage + " damage @" + bossName,textWidth - context.measureText(attackDamage + " damage @" + bossName).width,ySpacing + 17);
           totalDamage += attackDamage;
         }else{
           context.fillStyle = "red";
           context.font = "15px Arial";
-          context.fillText("0 damage @" + bossName,565 - context.measureText("0 damage @" + bossName).width,ySpacing + 17);
+          context.fillText("0 damage @" + bossName,textWidth - context.measureText("0 damage @" + bossName).width,ySpacing + 17);
         }
         break;
       case "heal":
@@ -395,7 +402,7 @@ function tweetCycle(){
           //Returns [player name,health restored]
           var healInfo = players[i].heal();
           //players[i].target.health += players[i].target.maxHealth * .2;
-          context.fillText(healInfo[1] + " HP " +   healInfo[0].substring(0,11),565 - context.measureText(healInfo[1] + " HP " +   healInfo[0].substring(0,11)).width,ySpacing + 17);
+          context.fillText(healInfo[1] + " HP " +   healInfo[0].substring(0,11),textWidth - context.measureText(healInfo[1] + " HP " +   healInfo[0].substring(0,11)).width,ySpacing + 17);
 
           players[i].action = "hit";
           players[i].target = "";
@@ -403,8 +410,8 @@ function tweetCycle(){
       case "self heal":
         context.fillStyle = "green";
         context.font = "15px Arial";
-        var healthInfo = players[i].selfHeal();
-        context.fillText(healInfo + " HP " + players[i].name.substring(0,11),565 - context.measureText(healInfo + " HP " + players[i].name.substring(0,11)).width,ySpacing + 17);
+        var healInfo = players[i].selfHeal();
+        context.fillText(healInfo + " HP " + players[i].name.substring(0,11),textWidth - context.measureText(healInfo + " HP " + players[i].name.substring(0,11)).width,ySpacing + 17);
 
         players[i].action = "hit";
         players[i].target = "";
@@ -413,23 +420,30 @@ function tweetCycle(){
         context.fillStyle = "black";
         context.font = "15px Arial";
         players[i].absorb += .02;
-        context.fillText("Dmg Absorption: " + players[i].absorb * 100 + "%",565 - context.measureText("Dmg Absorption: " + players[i].absorb + "%").width,ySpacing + 17);
+        context.fillText("Dmg Absorption: " + players[i].absorb * 100 + "%",textWidth - context.measureText("Dmg Absorption: " + players[i].absorb + "%").width,ySpacing + 17);
         players[i].action = "hit";
         break;
       case "cape":
         context.fillStyle = "black";
         context.font = "15px Arial";
         players[i].dodgeChance += .02;
-        context.fillText("Dodge Chance: " + players[i].dodgeChance * 100 + "%",565 - context.measureText("Dodge Chance:" + players[i].dodgeChance + "%").width,ySpacing + 17);
+        context.fillText("Dodge Chance: " + players[i].dodgeChance * 100 + "%",textWidth - context.measureText("Dodge Chance:" + players[i].dodgeChance + "%").width,ySpacing + 17);
         players[i].action = "hit";
         break;
       case "damage":
         context.fillStyle = "black";
         context.font = "15px Arial";
         players[i].maxDamage += 5;
-        context.fillText("Max Damage: " + players[i].maxDamage,565 - context.measureText("Max Damage: " + players[i].maxDamage).width,ySpacing + 17);
+        context.fillText("Max Damage: " + players[i].maxDamage,textWidth - context.measureText("Max Damage: " + players[i].maxDamage).width,ySpacing + 17);
         players[i].action = "hit";
         break;
+      case "rage":
+        context.fillStyle = "red";
+        context.font = "15px Arial";
+        attackDamage = players[i].attack();
+        players[i].handleRage();
+        context.fillText(attackDamage + " damage @" + bossName,textWidth - context.measureText(attackDamage + " damage @" + bossName).width,ySpacing + 17);
+      break;
     }
 
 
@@ -438,11 +452,15 @@ function tweetCycle(){
 
     //Inventory
     for(var j = 0;j < players[i].inventory.length;j++){
-      context.fillStyle = "black";
-      context.font = "10pt Arial";
+      if(players[i].action != "rage"){
+        context.fillStyle = "black";
+        context.font = "10pt Arial";
+      }else{
+        context.fillStyle = "red";
+        context.font = "10pt Arial";
+      }
+
       context.fillText(players[i].inventory[j].substring(0,1),inventorySpacingX + 3,ySpacing+15);
-
-
       context.beginPath();
       context.fillStyle = "black"
       context.rect(inventorySpacingX,ySpacing + 18,15,2);
@@ -476,7 +494,7 @@ function tweetCycle(){
 
 
     //Player Health bars
-    //The pixel space is 120 pixels
+    //The pixel space is 115 pixels
     var pHealth = players[i].health;
     var pMaxHealth = players[i].maxHealth;
     context.beginPath();
@@ -488,7 +506,7 @@ function tweetCycle(){
     }else{
       context.fillStyle = "red";
     }
-    context.rect(226,ySpacing + 7,(pHealth * 120)/pMaxHealth,10);
+    context.rect(226,ySpacing + 7,(pHealth * 110)/pMaxHealth,10);
     context.fill();
 
 
@@ -542,7 +560,7 @@ function tweetCycle(){
     //console.log("uploaded");
     var mediaIdStr = data.media_id_string;
     //TODO: Add cycle number to status
-    var params = {status: "Test game with fake players. Cycle #" + cycles, media_ids: [mediaIdStr]}
+    var params = {status: getFormattedTime() + " Game Cycle #" + cycles, media_ids: [mediaIdStr]}
 
     //upload tweet with new image
     T.post('statuses/update', params, function(err, data, response){
@@ -567,10 +585,19 @@ function attackCycle(){
       tweetStream = T.stream('user');
       tweetStream.on('tweet',tweetEvent);
     }else{
+      if(totalHealth == 0){
+        //Boss won
+      }else if(boss.health == 0){
+        //Players won
+      }else if(boss.health == 0 && totalHealth == 0){
+        //Tie
+      }
+      console.log("Game over");
       gameRunning = false;
       setTimeout(startGame,60000*gameOffTime);
     }
   }else{
+    console.log("Game over");
     tweetStream.stop();
     setTimeout(startGame,60000*gameOffTime);
   }
@@ -598,8 +625,8 @@ function tweetEvent(event){
     if((message.toUpperCase().indexOf("#JOINGAME") != -1) && checkPlayerArray("@" + user) && !gameRunning){
       //Add player to list, and give them a class
       var chosenClass = playerClasses[Math.floor(Math.random()*playerClasses.length)];
-      //var chosenClass = "Mage";
-      var newClass;
+      var chosenClass = "Archer";
+      //var newClass;
 
       switch (chosenClass) {
         case "Mage":
@@ -701,6 +728,24 @@ function tweetEvent(event){
           }
         }
       }
+    }else if(message.toUpperCase().indexOf("#RAGE") != -1 && gameRunning){
+      if(!checkPlayerArray("@" + user)){
+        var player = getPlayer("@" + user);
+        if(player.cooldown == 0 && player.action != "rage"){
+          if(player.getPlayerType() == "Archer"){
+            console.log(player.name + " is in rage mode");
+            player.action = "rage";
+            player.cooldown = 4;
+            player.rage();
+          }
+        }else{
+          console.log(player.cooldown);
+          console.log(player.action);
+          console.log("Cooldown is not 0 or player is alread in rage");
+        }
+      }else{
+        console.log("@" + user + " is not in game");
+      }
     }
   }
 }
@@ -777,4 +822,5 @@ function basicTweet(message){
 
 startGame();
 //boss = new Omega("Omega Giant",players.length * 3500);
+//randomPlayerMaker(10);
 //tweetGame();

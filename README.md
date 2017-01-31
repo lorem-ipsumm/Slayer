@@ -47,6 +47,7 @@ Each class has a unique set of strengths and weaknesses that synergize when pair
 		
 	Rage Mode: +150 Max Damage and +10% dodge chance for four cycles
 		Command: @_SlayerBot_ #rage
+		You cannot use any items or heal yourself while in rage mode
 		
 
 

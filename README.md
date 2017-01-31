@@ -44,6 +44,10 @@ Each class has a unique set of strengths and weaknesses that synergize when pair
 
 	Self Heal: Heal 20% of max health to yourself
 		Command: @_SlayerBot_ #heal @[yourname]
+		
+	Rage Mode: +150 Max Damage and +10% dodge chance for four cycles
+		Command: @_SlayerBot_ #rage
+		
 
 
 

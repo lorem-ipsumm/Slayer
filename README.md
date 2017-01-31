@@ -10,6 +10,8 @@ Slayer is a Twitter game that allows anyone with an account to play. Every hour 
 
 	There is a 10 player max at the moment
 	There is no way to check if the game is full at the moment, so try to be as fast as you can to join the game
+	If there isn't at least one person that joined the game wiht restart and wait 60 minutes before starting new game
+	If there is at least one person computers will fill the empty spots
 
 
 ##Classes

@@ -13,11 +13,22 @@ class Mage{
     this.target = "";
     this.mode = "normal";
     this.cooldown = 0;
+    this.charging = false;
+    this.charge = 5;
+  }
+
+  handleCharge(){
+    if(this.charging){
+      this.charge++;
+    }
+
+    if(this.charge == 5){
+      this.charging = false;
+    }
   }
 
   attack(){
     var attackDamage = Math.floor((Math.random() * (this.maxDamage - this.minDamage) + this.minDamage));
-
     return attackDamage;
   }
 

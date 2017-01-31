@@ -15,6 +15,16 @@ class Knight{
     this.cooldown = 0;
   }
 
+  handleCharge(){
+    if(this.charging){
+      this.charge++;
+    }
+
+    if(this.charge == 5){
+      this.charging = false;
+    }
+  }
+
   attack(){
     var attackDamage = Math.floor((Math.random() * (this.maxDamage - this.minDamage) + this.minDamage));
 

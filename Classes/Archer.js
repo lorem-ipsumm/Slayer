@@ -13,7 +13,9 @@ class Archer{
     this.target = "";
     this.mode = "normal";
     this.cooldown = 0;
+    this.charge = 5;
   }
+
 
   attack(){
     var attackDamage = Math.floor((Math.random() * (this.maxDamage - this.minDamage) + this.minDamage));
@@ -49,18 +51,26 @@ class Archer{
   }
 
   selfHeal(){
-    var num = Math.floor(this.target.maxHealth * .2);
-    if(this.health + num < this.maxHealth){
-      this.health += num;
-      return num;
-    }else{
-      this.health = this.maxHealth;
-      return num;
+    if(this.mode == "normal"){
+      var num = Math.floor(this.target.maxHealth * .2);
+      if(this.health + num < this.maxHealth){
+        this.health += num;
+        return num;
+      }else{
+        this.health = this.maxHealth;
+        return num;
+      }
     }
   }
 
-  cooldown(){
+  handleCharge(){
+    if(this.charging){
+      this.charge++;
+    }
 
+    if(this.charge == 5){
+      this.charging = false;
+    }
   }
 
   handleRage(){
@@ -71,21 +81,24 @@ class Archer{
     if(this.cooldown < 0){
       this.action = "hit";
       this.inventory = ["","","",""];
-      this.maxDamage -= 100;
+      this.maxDamage -= 150;
       this.dodgeChance -= .1;
       this.cooldown = 0;
       this.mode = "normal";
-      console.log("rage over");
+      this.charging = true;
     }
   }
 
 
   rage(){
-    this.inventory = ["R","A","G","E"];
-    this.maxDamage += 100;
-    this.dodgeChance += .1;
-    this.cooldown = 5;
-    this.mode = "rage";
+    if(this.mode == "normal"){
+      this.charge = 0;
+      this.inventory = ["R","A","G","E"];
+      this.maxDamage += 150;
+      this.dodgeChance += .1;
+      this.cooldown = 5;
+      this.mode = "rage";
+    }
   }
 
   giveItem(){

@@ -72,6 +72,18 @@ Each class has a unique set of strengths and weaknesses that synergize when pair
 		Command: @_SlayerBot_ #heal @[yourname]
 
 
+##Bosses
+>**OMEGA**
+
+	Health: Number of players * 3500
+	Low Damage [0 - 50]
+		Damage increases 5 points every cycle after cycle 20
+	
+>**NEXUS** (not in game yet)
+
+	Health: Number of players * 3500
+	Moderate Damage [0 - 70]
+		Damage increases 2 points every cycle after health is below 50%
 
 
 

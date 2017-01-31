@@ -10,6 +10,8 @@ Slayer is a Twitter game that allows anyone with an account to play. Every hour 
 
 	There is a 10 player max at the moment
 	There is no way to check if the game is full at the moment, so try to be as fast as you can to join the game
+	If there isn't at least one person that joined the game wiht restart and wait 60 minutes before starting new game
+	If there is at least one person computers will fill the empty spots
 
 
 ##Classes
@@ -44,6 +46,11 @@ Each class has a unique set of strengths and weaknesses that synergize when pair
 
 	Self Heal: Heal 20% of max health to yourself
 		Command: @_SlayerBot_ #heal @[yourname]
+		
+	Rage Mode: +150 Max Damage and +10% dodge chance for four cycles
+		Command: @_SlayerBot_ #rage
+		You cannot use any items or heal yourself while in rage mode
+		
 
 
 
@@ -65,6 +72,18 @@ Each class has a unique set of strengths and weaknesses that synergize when pair
 		Command: @_SlayerBot_ #heal @[yourname]
 
 
+##Bosses
+>**OMEGA**
+
+	Health: Number of players * 3500
+	Low Damage [0 - 50]
+		Damage increases 5 points every cycle after cycle 20
+	
+>**NEXUS** (not in game yet)
+
+	Health: Number of players * 3500
+	Moderate Damage [0 - 70]
+		Damage increases 2 points every cycle after health is below 50%
 
 
 

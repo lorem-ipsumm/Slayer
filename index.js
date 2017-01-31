@@ -19,10 +19,11 @@ var bosses = ["Omega","Nexus","Osiris"];
 var players = [];
 var gameRunning = false;
 var tweetStream;
+var favoriteStream;
 var playerLimit = 10;
 
-//In minutes
-var waitTime = 1;
+//Timers (in minutes)
+var waitTime = 10;
 var cycleTime = 1.5;
 var gameOffTime = 60;
 
@@ -31,8 +32,12 @@ var waitingTimer;
 var imageMessages = [];
 var playerClasses = ["Mage","Archer","Knight"];
 var boss;
+
+//Game variables
 var cycles = 0;
 var totalHealth = 0;
+var previousTweetID;
+var originalTweetID;
 
 //Backgrounds
 var startingBackground= new Image();
@@ -86,7 +91,7 @@ function startGame(){
   var stream = canvas.pngStream();
   //var dataUrl = stream.pipe(out);
 
-
+  /*
   T.post('media/upload',{media_data: canvas.toBuffer().toString('base64')},function(err,data,response){
     console.log("uploaded");
     var mediaIdStr = data.media_id_string;
@@ -94,17 +99,56 @@ function startGame(){
 
     //upload tweet with new image
     T.post('statuses/update', params, function(err, data, response){
-      console.log("Image tweet Succesful");
+      if(!err){
+        console.log("Image tweet Succesful");
+        originalTweetID = data.id_str;
+        previousTweetID = data.id_str;
+      }
     });
   });
+  */
+
+
 
 
 
   //Start listening for users joining the game
+  favoriteStream = T.stream('user');
+  favoriteStream.on('favorite',favoriteEvent);
   tweetStream = T.stream('user');
   tweetStream.on('tweet',tweetEvent);
   console.log("Waiting for people to join");
-  waitingTimer = setTimeout(intermissionOver,60000*waitTime);
+  //waitingTimer = setTimeout(intermissionOver,60000*waitTime);
+}
+
+function favoriteEvent(event){
+  var user = event.source.screen_name;
+  var target = event.target_object.id_str;
+  if((target == originalTweetID)&& checkPlayerArray("@" + user) && !gameRunning){
+    //Add player to list, and give them a class
+    var chosenClass = playerClasses[Math.floor(Math.random()*playerClasses.length)];
+    //var chosenClass = "Archer";
+    var newClass;
+
+    switch (chosenClass) {
+      case "Mage":
+        newClass= new Mage("@" + user,600);
+        break;
+      case "Archer":
+        newClass = new Archer("@" + user,600);
+        break;
+      case "Knight":
+        newClass = new Knight("@" + user,600);
+        break;
+    players.push(newClass);
+    console.log(newClass.name + " [" + newClass.getPlayerType() + "] joined!");
+    if(players.length >= playerLimit){
+      console.log("Limit reached");
+      tweetStream.stop();
+      clearTimeout(waitingTimer);
+      intermissionOver();
+    }
+  }
 }
 
 
@@ -149,14 +193,12 @@ function intermissionOver(){
 
     cycles = 0;
     tweetGame();
-    setTimeout(attackCycle,60000*1);
+    setTimeout(attackCycle,60000*waitTime/2);
   }else{
     console.log("Not enough players");
     gameRunning = false;
-    T.post('statuses/update', { status:getFormattedTime() +  ' Not enough players. Starting again in 60 minutes' }, function(err, data, response) {
-      if(err)
-       console.log(err);
-    });
+    var message = getFormattedTime() +  ' Not enough players. Starting again in 60 minutes';
+    basicTweet(message,true);
     setTimeout(startGame,60000*gameOffTime);
   }
 }
@@ -285,6 +327,7 @@ function tweetGame(){
 
 }
 
+//Drawing for Cycle 0
 function drawCycle(){
   var fs = require('fs')
   //var out = fs.createWriteStream('./Resources/Output Images/CycleOutput.png');
@@ -296,12 +339,14 @@ function drawCycle(){
     //console.log("uploaded");
     var mediaIdStr = data.media_id_string;
     //TODO: Add cycle number to status
-    var params = {status: "Game starting in 5 minutes! Cycle #" + cycles, media_ids: [mediaIdStr]}
+    var params = {status: getFormattedTime() + " Game starting in 5 minutes! Cycle #" + cycles, media_ids: [mediaIdStr],in_reply_to_status_id: previousTweetID}
 
     //upload tweet with new image
     T.post('statuses/update', params, function(err, data, response){
       if(err){
         console.log(err);
+      }else{
+        //previousTweetID = data.id_str;
       }
     });
   });
@@ -356,6 +401,12 @@ function tweetCycle(){
     ySpacing += 22;
   }
 
+  boss.count += 1;
+
+  if(boss.count >= 20){
+    boss.maxDamage += 5;
+  }
+
 
 
   ySpacing = 180;
@@ -379,7 +430,7 @@ function tweetCycle(){
     }
 
 
-
+    //Player Actions
     switch(players[i].action){
       case "hit":
         //attackDamage = Math.floor((Math.random() * (maxDamage - minDamage) + minDamage));
@@ -403,7 +454,7 @@ function tweetCycle(){
           var healInfo = players[i].heal();
           //players[i].target.health += players[i].target.maxHealth * .2;
           context.fillText(healInfo[1] + " HP " +   healInfo[0].substring(0,11),textWidth - context.measureText(healInfo[1] + " HP " +   healInfo[0].substring(0,11)).width,ySpacing + 17);
-
+          removeItem("Health",players[i].inventory);
           players[i].action = "hit";
           players[i].target = "";
         break;
@@ -420,14 +471,16 @@ function tweetCycle(){
         context.fillStyle = "black";
         context.font = "15px Arial";
         players[i].absorb += .02;
-        context.fillText("Dmg Absorption: " + players[i].absorb * 100 + "%",textWidth - context.measureText("Dmg Absorption: " + players[i].absorb + "%").width,ySpacing + 17);
+        context.fillText("Dmg Absorption: " + Math.floor(players[i].absorb * 100) + "%",textWidth - context.measureText("Dmg Absorption: " + players[i].absorb + "%").width,ySpacing + 17);
+        removeItem("Armor",players[i].inventory);
         players[i].action = "hit";
         break;
       case "cape":
         context.fillStyle = "black";
         context.font = "15px Arial";
         players[i].dodgeChance += .02;
-        context.fillText("Dodge Chance: " + players[i].dodgeChance * 100 + "%",textWidth - context.measureText("Dodge Chance:" + players[i].dodgeChance + "%").width,ySpacing + 17);
+        context.fillText("Dodge Chance: " + Math.floor(players[i].dodgeChance * 100) + "%",textWidth - context.measureText("Dodge Chance:" + players[i].dodgeChance + "%").width,ySpacing + 17);
+        removeItem("Cape",players[i].inventory);
         players[i].action = "hit";
         break;
       case "damage":
@@ -435,16 +488,19 @@ function tweetCycle(){
         context.font = "15px Arial";
         players[i].maxDamage += 5;
         context.fillText("Max Damage: " + players[i].maxDamage,textWidth - context.measureText("Max Damage: " + players[i].maxDamage).width,ySpacing + 17);
+        removeItem("Damage",players[i].inventory);
         players[i].action = "hit";
         break;
       case "rage":
         context.fillStyle = "red";
         context.font = "15px Arial";
+        players[i].rage();
         attackDamage = players[i].attack();
         players[i].handleRage();
         context.fillText(attackDamage + " damage @" + bossName,textWidth - context.measureText(attackDamage + " damage @" + bossName).width,ySpacing + 17);
       break;
     }
+    players[i].handleCharge();
 
 
     totalHealth += players[i].health;
@@ -560,12 +616,14 @@ function tweetCycle(){
     //console.log("uploaded");
     var mediaIdStr = data.media_id_string;
     //TODO: Add cycle number to status
-    var params = {status: getFormattedTime() + " Game Cycle #" + cycles, media_ids: [mediaIdStr]}
+    var params = {status: getFormattedTime() + " Game Cycle #" + cycles, media_ids: [mediaIdStr],in_reply_to_status_id: previousTweetID}
 
     //upload tweet with new image
     T.post('statuses/update', params, function(err, data, response){
       if(err){
         console.log(err);
+      }else{
+        previousTweetID = data.id_str;
       }
     });
   });
@@ -622,11 +680,11 @@ function tweetEvent(event){
   //If the tweet was directed at the bot
   if(receipent == "_SlayerBot_"){
     //Make sure they are joining the game, and haven't already joined
-    if((message.toUpperCase().indexOf("#JOINGAME") != -1) && checkPlayerArray("@" + user) && !gameRunning){
+      if((message.toUpperCase().indexOf("#JOINGAME") != -1) && checkPlayerArray("@" + user) && !gameRunning){
       //Add player to list, and give them a class
       var chosenClass = playerClasses[Math.floor(Math.random()*playerClasses.length)];
-      var chosenClass = "Archer";
-      //var newClass;
+      //var chosenClass = "Archer";
+      var newClass;
 
       switch (chosenClass) {
         case "Mage":
@@ -652,6 +710,7 @@ function tweetEvent(event){
       //Check player array returns true if player is not in game....
       if(!checkPlayerArray("@" + user)){
         var users = event.entities.user_mentions;
+        //If there are no user mentions it is a heal item
         if(users.length > 1){
           var target = "@" +users[1].screen_name;
           if(!checkPlayerArray(target)){
@@ -674,14 +733,6 @@ function tweetEvent(event){
           if(player.inventory.indexOf("Health") != -1 && player.action != "heal"){
             player.action = "heal";
             player.target = player;
-            var found = false;
-            for(var i = 0; i < player.inventory.length;i++){
-              if(player.inventory[i] == "Health" && !found){
-                found = true;
-                player.inventory.push("");
-                player.inventory.splice(i,1);
-              }
-            }
           }
         }
       }
@@ -690,28 +741,13 @@ function tweetEvent(event){
         var player = getPlayer("@" + user);
         if(player.inventory.indexOf("Armor") != -1 && player.action != "armor"){
           player.action = "armor"
-          var found = false;
-          for(var i = 0; i < player.inventory.length;i++){
-            if(player.inventory[i] == "Armor" && !found){
-              found = true;
-              player.inventory.push("");
-              player.inventory.splice(i,1);
-            }
-          }
         }
       }
     }else if(message.toUpperCase().indexOf("#CAPE") != -1 && gameRunning){
       if(!checkPlayerArray("@" + user)){
         var player = getPlayer("@" + user);
         if(player.inventory.indexOf("Cape") != -1 && player.action != "cape"){
-          var found = false;
           player.action = "cape"
-          for(var i = 0; i < player.inventory.length;i++){
-            if(player.inventory[i] == "Cape" && !found){
-              player.inventory.push("");
-              player.inventory.splice(i,1);
-            }
-          }
         }
       }
     }else if(message.toUpperCase().indexOf("#DAMAGE") != -1 && gameRunning){
@@ -719,13 +755,6 @@ function tweetEvent(event){
         var player = getPlayer("@" + user);
         if(player.inventory.indexOf("Damage") != -1 && player.action != "damage"){
           player.action = "damage"
-          for(var i = 0; i < player.inventory.length;i++){
-            if(player.inventory[i] == "Damage" && !found){
-              found = true;
-              player.inventory.push("");
-              player.inventory.splice(i,1);
-            }
-          }
         }
       }
     }else if(message.toUpperCase().indexOf("#RAGE") != -1 && gameRunning){
@@ -733,18 +762,22 @@ function tweetEvent(event){
         var player = getPlayer("@" + user);
         if(player.cooldown == 0 && player.action != "rage"){
           if(player.getPlayerType() == "Archer"){
-            console.log(player.name + " is in rage mode");
             player.action = "rage";
-            player.cooldown = 4;
-            player.rage();
           }
-        }else{
-          console.log(player.cooldown);
-          console.log(player.action);
-          console.log("Cooldown is not 0 or player is alread in rage");
         }
-      }else{
-        console.log("@" + user + " is not in game");
+      }
+    }
+  }
+}
+
+function removeItem(itemName,inventory){
+  var found = false;
+  for(var i = 0;i < inventory.length; i++){
+    if(!found){
+      if(inventory[i] == itemName){
+        found = true;
+        inventory.push("");
+        inventory.splice(i,1);
       }
     }
   }
@@ -802,21 +835,30 @@ function printPlayerArray(array){
 }
 
 
-function basicTweet(message){
-  if(message.length < 140){
-    T.post('statuses/update',{status: message},function(err,data,response){
-      if(!err){
-        //console.log(data);
-        console.log("Tweet successful");
-      }else{
-        console.log(err);
-      }
-    });
+function basicTweet(message,reply){
+  if(!reply){
+    if(message.length < 140){
+      T.post('statuses/update',{status: message},function(err,data,response){
+        if(!err){
+          //console.log(data);
+          console.log("Tweet successful");
+        }else{
+          console.log(err);
+        }
+      });
+    }else{
+      console.log("Tweet too long");
+    }
   }else{
-    console.log("Tweet too long");
+    if(message.length < 140){
+      T.post('statuses/update', {status: message, in_reply_to_status_id: previousTweetID},function(err,data,response){
+        if(err){
+          console.log(err);
+        }
+      });
+    }
   }
 }
-
 
 
 

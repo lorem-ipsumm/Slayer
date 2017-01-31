@@ -5,7 +5,7 @@ class Nexus{
     this.maxHealth = health;
     this.health = health;
     this.minDamage = 0;
-    this.maxDamage = 50;
+    this.maxDamage = 70;
     this.critChance = .05;
     this.count = 0;
   }
@@ -32,6 +32,13 @@ class Nexus{
 
     this.count += 1;
     return info;
+  }
+
+  agro(){
+    this.count += 1;
+    if(this.count >= 20){
+      this.maxDamage += 5;
+    }
   }
 
   getBossType(){

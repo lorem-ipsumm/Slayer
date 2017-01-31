@@ -27,6 +27,12 @@ class Omega{
     return info;
   }
 
+  agro(){
+    if(this.health < this.maxHealth * .5){
+      this.maxDamage += 5;
+    }
+  }
+
   getBossType(){
     return "Omega";
   }

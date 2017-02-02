@@ -1,7 +1,6 @@
 class Nexus{
   constructor(name,health){
     this.name = name;
-    this.agro = 20;
     this.maxHealth = health;
     this.health = health;
     this.minDamage = 0;

@@ -1,7 +1,6 @@
 class Omega{
   constructor(name,health){
     this.name = name;
-    this.agro = 20;
     this.maxHealth = health;
     this.health = health;
     this.minDamage = 0;
@@ -28,7 +27,8 @@ class Omega{
   }
 
   agro(){
-    if(this.health < this.maxHealth * .5){
+    this.count += 1;
+    if(this.count >= 20){
       this.maxDamage += 5;
     }
   }

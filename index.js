@@ -91,7 +91,7 @@ function startGame(){
   var stream = canvas.pngStream();
   //var dataUrl = stream.pipe(out);
 
-  /*
+
   T.post('media/upload',{media_data: canvas.toBuffer().toString('base64')},function(err,data,response){
     console.log("uploaded");
     var mediaIdStr = data.media_id_string;
@@ -106,47 +106,63 @@ function startGame(){
       }
     });
   });
-  */
+
 
 
 
 
 
   //Start listening for users joining the game
-  favoriteStream = T.stream('user');
-  favoriteStream.on('favorite',favoriteEvent);
+  //favoriteStream = T.stream('user');
+  //favoriteStream.on('favorite',favoriteEvent);
   tweetStream = T.stream('user');
   tweetStream.on('tweet',tweetEvent);
+  tweetStream.on('favorite',interactionEvent);
+  tweetStream.on('unfavorite',interactionEvent);
   console.log("Waiting for people to join");
-  //waitingTimer = setTimeout(intermissionOver,60000*waitTime);
+  waitingTimer = setTimeout(intermissionOver,60000*waitTime);
 }
 
-function favoriteEvent(event){
+
+
+function interactionEvent(event){
   var user = event.source.screen_name;
   var target = event.target_object.id_str;
-  if((target == originalTweetID)&& checkPlayerArray("@" + user) && !gameRunning){
-    //Add player to list, and give them a class
-    var chosenClass = playerClasses[Math.floor(Math.random()*playerClasses.length)];
-    //var chosenClass = "Archer";
-    var newClass;
+  if(event.event == "favorite"){
+    if((target == originalTweetID) && checkPlayerArray("@" + user) && !gameRunning){
+      //Add player to list, and give them a class
+      var chosenClass = playerClasses[Math.floor(Math.random()*playerClasses.length)];
+      //var chosenClass = "Archer";
+      var newClass;
 
-    switch (chosenClass) {
-      case "Mage":
-        newClass= new Mage("@" + user,600);
-        break;
-      case "Archer":
-        newClass = new Archer("@" + user,600);
-        break;
-      case "Knight":
-        newClass = new Knight("@" + user,600);
-        break;
-    players.push(newClass);
-    console.log(newClass.name + " [" + newClass.getPlayerType() + "] joined!");
-    if(players.length >= playerLimit){
-      console.log("Limit reached");
-      tweetStream.stop();
-      clearTimeout(waitingTimer);
-      intermissionOver();
+      switch (chosenClass) {
+        case "Mage":
+          newClass= new Mage("@" + user,600);
+          break;
+        case "Archer":
+          newClass = new Archer("@" + user,600);
+          break;
+        case "Knight":
+          newClass = new Knight("@" + user,600);
+          break;
+      }
+      players.push(newClass);
+      console.log(newClass.name + " [" + newClass.getPlayerType() + "] joined!");
+      if(players.length >= playerLimit){
+        console.log("Limit reached");
+        tweetStream.stop();
+        clearTimeout(waitingTimer);
+        intermissionOver();
+      }
+    }
+  }else if(event.event == "unfavorite"){
+    if((target == originalTweetID) && !checkPlayerArray("@" + user) && !gameRunning){
+      for(var i = 0; i < players.length;i++){
+        if(players[i].name == ("@" + user)){
+          console.log("@" + user + " left the game");
+          players.splice(i,1);
+        }
+      }
     }
   }
 }
@@ -277,6 +293,16 @@ function playerInfo(){
       inventorySpacingX += 20;
     }
 
+    //Charge
+    var chargeSpacingX = 725;
+    for(var j = 0;j < players[i].charge;j++){
+      context.beginPath();
+      context.arc(chargeSpacingX,ySpacing+17,5,0,2*Math.PI);
+      context.stroke();
+      context.closePath();
+      chargeSpacingX += 15;
+    }
+
     //Player name
     context.font = "15px Arial";
     context.fillStyle = "black";
@@ -330,9 +356,10 @@ function tweetGame(){
 //Drawing for Cycle 0
 function drawCycle(){
   var fs = require('fs')
-  //var out = fs.createWriteStream('./Resources/Output Images/CycleOutput.png');
+  //var out = fs.createWriteStream('./Resources/Images/CycleOutput.png');
   var stream = canvas.pngStream();
   //var dataUrl = stream.pipe(out);
+
 
   //Uploading the image to twitter first
   T.post('media/upload',{media_data: canvas.toBuffer().toString('base64')},function(err,data,response){
@@ -345,11 +372,10 @@ function drawCycle(){
     T.post('statuses/update', params, function(err, data, response){
       if(err){
         console.log(err);
-      }else{
-        //previousTweetID = data.id_str;
       }
     });
   });
+
 }
 
 //Tweet match stuff
@@ -359,7 +385,7 @@ function tweetCycle(){
   var bossMaxDamage = boss.maxDamage;
   var bossHealth = boss.health;
   var bossMaxHealth = boss.maxHealth;
-  var agro = boss.agro;
+  //var agro = boss.agro;
   var totalDamage = 0;
   totalHealth = 0;
   var ySpacing;
@@ -372,12 +398,12 @@ function tweetCycle(){
   //Boss name
   context.fillStyle = "black";
   context.font = "100px Arial";
-  context.fillText(bossName,(canvas.width/2) - (context.measureText(bossName).width/2),90);
+  context.fillText(bossName.toUpperCase(),(canvas.width/2) - (context.measureText(bossName).width/2),90);
 
   //Boss info box
   context.fillStyle = "black";
   context.font = "20px Arial";
-  context.fillText(bossName,450,598);
+  context.fillText(bossName.toUpperCase(),450,598);
   context.fillText(bossMaxHealth,485,647);
   context.fillText(bossMinDamage + " HP - " + bossMaxDamage + " HP",565,697);
 
@@ -401,11 +427,7 @@ function tweetCycle(){
     ySpacing += 22;
   }
 
-  boss.count += 1;
-
-  if(boss.count >= 20){
-    boss.maxDamage += 5;
-  }
+  boss.agro();
 
 
 
@@ -471,7 +493,7 @@ function tweetCycle(){
         context.fillStyle = "black";
         context.font = "15px Arial";
         players[i].absorb += .02;
-        context.fillText("Dmg Absorption: " + Math.floor(players[i].absorb * 100) + "%",textWidth - context.measureText("Dmg Absorption: " + players[i].absorb + "%").width,ySpacing + 17);
+        context.fillText("Dmg Absorption: " + Math.floor(players[i].absorb * 100) + "%",textWidth - context.measureText("Dmg Absorption: " + Math.floor(players[i].absorb * 100) + "%").width,ySpacing + 17);
         removeItem("Armor",players[i].inventory);
         players[i].action = "hit";
         break;
@@ -479,7 +501,7 @@ function tweetCycle(){
         context.fillStyle = "black";
         context.font = "15px Arial";
         players[i].dodgeChance += .02;
-        context.fillText("Dodge Chance: " + Math.floor(players[i].dodgeChance * 100) + "%",textWidth - context.measureText("Dodge Chance:" + players[i].dodgeChance + "%").width,ySpacing + 17);
+        context.fillText("Dodge Chance: " + Math.floor(players[i].dodgeChance * 100) + "%",textWidth - context.measureText("Dodge Chance:" + Math.floor(players[i].dodgeChance * 100) + "%").width,ySpacing + 17);
         removeItem("Cape",players[i].inventory);
         players[i].action = "hit";
         break;
@@ -498,7 +520,15 @@ function tweetCycle(){
         attackDamage = players[i].attack();
         players[i].handleRage();
         context.fillText(attackDamage + " damage @" + bossName,textWidth - context.measureText(attackDamage + " damage @" + bossName).width,ySpacing + 17);
-      break;
+        break;
+      case "beserk":
+        context.fillStyle = "red";
+        context.font = "15px Arial";
+        players[i].beserk();
+        attackDamage = players[i].attack();
+        players[i].handleBeserk();
+        context.fillText(attackDamage + " damage @" + bossName,textWidth - context.measureText(attackDamage + " damage @" + bossName).width,ySpacing + 17);
+        break;
     }
     players[i].handleCharge();
 
@@ -508,7 +538,7 @@ function tweetCycle(){
 
     //Inventory
     for(var j = 0;j < players[i].inventory.length;j++){
-      if(players[i].action != "rage"){
+      if(players[i].action == "normal"){
         context.fillStyle = "black";
         context.font = "10pt Arial";
       }else{
@@ -523,6 +553,17 @@ function tweetCycle(){
       context.fill();
       context.closePath();
       inventorySpacingX += 20;
+    }
+
+
+    //Charge
+    var chargeSpacingX = 725;
+    for(var j = 0;j < players[i].charge;j++){
+      context.beginPath();
+      context.arc(chargeSpacingX,ySpacing+17,5,0,2*Math.PI);
+      context.stroke();
+      context.closePath();
+      chargeSpacingX += 15;
     }
 
 
@@ -568,7 +609,7 @@ function tweetCycle(){
 
     //Health Bar Text
     context.fillStyle = "black";
-    context.strokeStyle = "black";
+    context.strokeStyle = "gray";
     context.fillText(pHealth + "/" + pMaxHealth,400 - context.measureText(pHealth + "/" + pMaxHealth).width,ySpacing + 17);
     //context.strokeText(pHealth + "/" + pMaxHealth,325,ySpacing + 16);
     //context.textAlign = "right";
@@ -639,9 +680,9 @@ function attackCycle(){
 
     if(totalHealth != 0 && boss.health != 0){
       cleanPlayerArray();
-      setTimeout(attackCycle,60000*cycleTime);
       tweetStream = T.stream('user');
       tweetStream.on('tweet',tweetEvent);
+      setTimeout(attackCycle,60000*cycleTime);
     }else{
       if(totalHealth == 0){
         //Boss won
@@ -678,9 +719,10 @@ function tweetEvent(event){
   var user = event.user.screen_name;
 
   //If the tweet was directed at the bot
-  if(receipent == "_SlayerBot_"){
+  if(receipent == "_SlayerBot_" && user != "_SlayerBot_"){
+    console.log("@" + user + "tweeted the bot");
     //Make sure they are joining the game, and haven't already joined
-      if((message.toUpperCase().indexOf("#JOINGAME") != -1) && checkPlayerArray("@" + user) && !gameRunning){
+    if((message.toUpperCase().indexOf("#JOINGAME") != -1) && checkPlayerArray("@" + user) && !gameRunning){
       //Add player to list, and give them a class
       var chosenClass = playerClasses[Math.floor(Math.random()*playerClasses.length)];
       //var chosenClass = "Archer";
@@ -718,11 +760,13 @@ function tweetEvent(event){
             var target = getPlayer(target);
             if(player.name == target.name){
               if(player.getPlayerType() != "Knight"){
+                console.log(player.name + " is set to self-heal");
                 player.action = "self heal"
                 player.target = target;
               }
             }else{
               if(player.getPlayerType() == "Mage"){
+                console.log(player.name + " is set to heal");
                 player.action = "heal";
                 player.target = target;
               }
@@ -731,6 +775,7 @@ function tweetEvent(event){
         }else{
           var player = getPlayer("@" + user);
           if(player.inventory.indexOf("Health") != -1 && player.action != "heal"){
+            console.log(player.name + " is set to use healing item");
             player.action = "heal";
             player.target = player;
           }
@@ -740,6 +785,7 @@ function tweetEvent(event){
       if(!checkPlayerArray("@" + user)){
         var player = getPlayer("@" + user);
         if(player.inventory.indexOf("Armor") != -1 && player.action != "armor"){
+          console.log(player.name + " is set to use armor item");
           player.action = "armor"
         }
       }
@@ -747,6 +793,7 @@ function tweetEvent(event){
       if(!checkPlayerArray("@" + user)){
         var player = getPlayer("@" + user);
         if(player.inventory.indexOf("Cape") != -1 && player.action != "cape"){
+          console.log(player.name + " is set to use cape item");
           player.action = "cape"
         }
       }
@@ -754,6 +801,7 @@ function tweetEvent(event){
       if(!checkPlayerArray("@" + user)){
         var player = getPlayer("@" + user);
         if(player.inventory.indexOf("Damage") != -1 && player.action != "damage"){
+          console.log(player.name + " is set to use damage item");
           player.action = "damage"
         }
       }
@@ -762,13 +810,25 @@ function tweetEvent(event){
         var player = getPlayer("@" + user);
         if(player.cooldown == 0 && player.action != "rage"){
           if(player.getPlayerType() == "Archer"){
+            console.log(player.name + " is set to go into rage mode");
             player.action = "rage";
+          }
+        }
+      }
+    }else if(message.toUpperCase().indexOf("#BESERK") != -1 && gameRunning){
+      if(!checkPlayerArray("@" + user)){
+        var player = getPlayer("@" + user);
+        if(player.cooldown == 0 && player.action != "beserk"){
+          if(player.getPlayerType() == "Knight"){
+            console.log(player.name + " is set to go into beserk mode");
+            player.action = "beserk";
           }
         }
       }
     }
   }
 }
+
 
 function removeItem(itemName,inventory){
   var found = false;
@@ -862,7 +922,7 @@ function basicTweet(message,reply){
 
 
 
-startGame();
+//startGame();
 //boss = new Omega("Omega Giant",players.length * 3500);
-//randomPlayerMaker(10);
-//tweetGame();
+randomPlayerMaker(10);
+tweetGame();

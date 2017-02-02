@@ -13,7 +13,8 @@ class Archer{
     this.target = "";
     this.mode = "normal";
     this.cooldown = 0;
-    this.charge = 5;
+    this.charging = false;
+    this.charge = 4;
   }
 
 
@@ -68,7 +69,7 @@ class Archer{
       this.charge++;
     }
 
-    if(this.charge == 5){
+    if(this.charge == 4){
       this.charging = false;
     }
   }

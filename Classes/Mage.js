@@ -14,7 +14,7 @@ class Mage{
     this.mode = "normal";
     this.cooldown = 0;
     this.charging = false;
-    this.charge = 5;
+    this.charge = 4;
   }
 
   handleCharge(){
@@ -22,7 +22,7 @@ class Mage{
       this.charge++;
     }
 
-    if(this.charge == 5){
+    if(this.charge == 4){
       this.charging = false;
     }
   }

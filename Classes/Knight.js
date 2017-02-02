@@ -13,6 +13,8 @@ class Knight{
     this.mode = "normal";
     this.target = "";
     this.cooldown = 0;
+    this.charging = false;
+    this.charge = 4;
   }
 
   handleCharge(){
@@ -20,7 +22,7 @@ class Knight{
       this.charge++;
     }
 
-    if(this.charge == 5){
+    if(this.charge == 4){
       this.charging = false;
     }
   }
@@ -45,6 +47,43 @@ class Knight{
       return 0;
     }
     return fDamage;
+  }
+
+  handleCharge(){
+    if(this.charging){
+      this.charge++;
+    }
+
+    if(this.charge == 5){
+      this.charging = false;
+    }
+  }
+
+  handleBeserk(){
+    if(this.cooldown < 4){
+      this.inventory[this.cooldown] = "";
+    }
+    this.cooldown -= 1;
+    if(this.cooldown < 0){
+      this.action = "hit";
+      this.inventory = ["","","",""];
+      this.maxDamage -= 200;
+      this.absorb -= .3;
+      this.cooldown = 0;
+      this.mode = "normal";
+      this.charging = true;
+    }
+  }
+
+  beserk(){
+    if(this.mode == "normal"){
+      this.charge = 0;
+      this.inventory = ["B","S","R","K"];
+      this.maxDamage += 200;
+      this.absorb += .3;
+      this.cooldown = 5;
+      this.mode = "beserk";
+    }
   }
 
 

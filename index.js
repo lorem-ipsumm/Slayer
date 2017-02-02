@@ -7,6 +7,7 @@ var Knight = require('./Classes/Knight');
 var Archer = require('./Classes/Archer');
 var Omega = require('./Bosses/Omega');
 var path = require('path');
+var utils = require('./Utilities');
 console.log("Loaded libraries");
 
 
@@ -38,6 +39,7 @@ var cycles = 0;
 var totalHealth = 0;
 var previousTweetID;
 var originalTweetID;
+var deads = [];
 
 //Backgrounds
 var startingBackground= new Image();
@@ -533,7 +535,7 @@ function tweetCycle(){
     players[i].handleCharge();
 
 
-    totalHealth += players[i].health;
+
 
 
     //Inventory
@@ -603,6 +605,12 @@ function tweetCycle(){
     }else{
       context.fillStyle = "red";
     }
+
+    if(players[i].health == 0){
+      players[i].deaths++;
+      deads.push(players[i]);
+    }
+
     context.rect(226,ySpacing + 7,(pHealth * 110)/pMaxHealth,10);
     context.fill();
 
@@ -615,6 +623,7 @@ function tweetCycle(){
     //context.textAlign = "right";
 
 
+    totalHealth += players[i].health;
     ySpacing += 22;
   }
 
@@ -722,7 +731,7 @@ function tweetEvent(event){
   if(receipent == "_SlayerBot_" && user != "_SlayerBot_"){
     console.log("@" + user + "tweeted the bot");
     //Make sure they are joining the game, and haven't already joined
-    if((message.toUpperCase().indexOf("#JOINGAME") != -1) && checkPlayerArray("@" + user) && !gameRunning){
+    if((message.toUpperCase().indexOf("#JOINGAME") != -1) && checkPlayerArray(("@" + user),players) && !gameRunning){
       //Add player to list, and give them a class
       var chosenClass = playerClasses[Math.floor(Math.random()*playerClasses.length)];
       //var chosenClass = "Archer";
@@ -750,12 +759,12 @@ function tweetEvent(event){
     //Differentiate between "Heal" and "Health"
     }else if(message.toUpperCase().indexOf("#HEAL") != -1 && gameRunning){
       //Check player array returns true if player is not in game....
-      if(!checkPlayerArray("@" + user)){
+      if(!checkPlayerArray(("@" + user),players)){
         var users = event.entities.user_mentions;
         //If there are no user mentions it is a heal item
         if(users.length > 1){
           var target = "@" +users[1].screen_name;
-          if(!checkPlayerArray(target)){
+          if(!checkPlayerArray(target,players)){
             var player = getPlayer("@" + user);
             var target = getPlayer(target);
             if(player.name == target.name){
@@ -765,7 +774,7 @@ function tweetEvent(event){
                 player.target = target;
               }
             }else{
-              if(player.getPlayerType() == "Mage"){
+              if(player.getPlayerType() == "Mage" && target != null){
                 console.log(player.name + " is set to heal");
                 player.action = "heal";
                 player.target = target;
@@ -782,7 +791,7 @@ function tweetEvent(event){
         }
       }
     }else if(message.toUpperCase().indexOf("#ARMOR") != -1 && gameRunning){
-      if(!checkPlayerArray("@" + user)){
+      if(!checkPlayerArray(("@" + user),players)){
         var player = getPlayer("@" + user);
         if(player.inventory.indexOf("Armor") != -1 && player.action != "armor"){
           console.log(player.name + " is set to use armor item");
@@ -790,7 +799,7 @@ function tweetEvent(event){
         }
       }
     }else if(message.toUpperCase().indexOf("#CAPE") != -1 && gameRunning){
-      if(!checkPlayerArray("@" + user)){
+      if(!checkPlayerArray(("@" + user),players)){
         var player = getPlayer("@" + user);
         if(player.inventory.indexOf("Cape") != -1 && player.action != "cape"){
           console.log(player.name + " is set to use cape item");
@@ -798,7 +807,7 @@ function tweetEvent(event){
         }
       }
     }else if(message.toUpperCase().indexOf("#DAMAGE") != -1 && gameRunning){
-      if(!checkPlayerArray("@" + user)){
+      if(!checkPlayerArray(("@" + user),players)){
         var player = getPlayer("@" + user);
         if(player.inventory.indexOf("Damage") != -1 && player.action != "damage"){
           console.log(player.name + " is set to use damage item");
@@ -806,9 +815,9 @@ function tweetEvent(event){
         }
       }
     }else if(message.toUpperCase().indexOf("#RAGE") != -1 && gameRunning){
-      if(!checkPlayerArray("@" + user)){
+      if(!checkPlayerArray(("@" + user),players)){
         var player = getPlayer("@" + user);
-        if(player.cooldown == 0 && player.action != "rage"){
+        if(player.cooldown == 4 && player.action != "rage"){
           if(player.getPlayerType() == "Archer"){
             console.log(player.name + " is set to go into rage mode");
             player.action = "rage";
@@ -816,18 +825,35 @@ function tweetEvent(event){
         }
       }
     }else if(message.toUpperCase().indexOf("#BESERK") != -1 && gameRunning){
-      if(!checkPlayerArray("@" + user)){
+      if(!checkPlayerArray(("@" + user),players)){
         var player = getPlayer("@" + user);
-        if(player.cooldown == 0 && player.action != "beserk"){
+        if(player.charge == 4 && player.action != "beserk"){
           if(player.getPlayerType() == "Knight"){
             console.log(player.name + " is set to go into beserk mode");
             player.action = "beserk";
           }
         }
       }
+    }else if(message.toUpperCase().indexOf("#REVIVE") != -1 && gameRunning){
+      if(!checkPlayerArray(("@" + user),players)){
+        var player = getPlayer("@" + user);
+        if(player.charge == 4 && player.action != "revive"){
+          if(player.getPlayerType() == "Mage"){
+            if(users.length > 1){
+              var player = getPlayer("@" + user);
+              var target = getPlayer(target);
+              if(target != null){
+                //Check "deads" array
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
+
+
 
 
 function removeItem(itemName,inventory){
@@ -877,9 +903,9 @@ function randomPlayerMaker(amount){
 }
 
 
-function checkPlayerArray(name){
+function checkPlayerArray(name,array){
   var pass = true;
-  for(var i = 0;i < players.length; i++){
+  for(var i = 0;i < array.length; i++){
     if(players[i].name == name){
       pass = false;
     }
@@ -922,7 +948,7 @@ function basicTweet(message,reply){
 
 
 
-//startGame();
+startGame();
 //boss = new Omega("Omega Giant",players.length * 3500);
-randomPlayerMaker(10);
-tweetGame();
+//randomPlayerMaker(10);
+//tweetGame();

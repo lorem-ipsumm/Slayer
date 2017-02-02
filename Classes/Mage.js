@@ -15,6 +15,7 @@ class Mage{
     this.cooldown = 0;
     this.charging = false;
     this.charge = 4;
+    this.deaths = 0;
   }
 
   handleCharge(){

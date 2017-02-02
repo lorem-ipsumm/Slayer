@@ -15,6 +15,7 @@ class Archer{
     this.cooldown = 0;
     this.charging = false;
     this.charge = 4;
+    this.deaths = 0;
   }
 
 

@@ -7,7 +7,7 @@ var Knight = require('./Classes/Knight');
 var Archer = require('./Classes/Archer');
 var Omega = require('./Bosses/Omega');
 var path = require('path');
-var utils = require('./Utilities');
+var utils = require('./utilities');
 console.log("Loaded libraries");
 
 
@@ -40,6 +40,7 @@ var totalHealth = 0;
 var previousTweetID;
 var originalTweetID;
 var deads = [];
+var startingHealth = 600;
 
 //Backgrounds
 var startingBackground= new Image();
@@ -119,6 +120,7 @@ function startGame(){
   //favoriteStream.on('favorite',favoriteEvent);
   tweetStream = T.stream('user');
   tweetStream.on('tweet',tweetEvent);
+
   tweetStream.on('favorite',interactionEvent);
   tweetStream.on('unfavorite',interactionEvent);
   console.log("Waiting for people to join");
@@ -126,26 +128,30 @@ function startGame(){
 }
 
 
+function testEvent(event){
+  console.log(event);
+}
+
 
 function interactionEvent(event){
   var user = event.source.screen_name;
   var target = event.target_object.id_str;
   if(event.event == "favorite"){
-    if((target == originalTweetID) && checkPlayerArray("@" + user) && !gameRunning){
+    if((target == originalTweetID) && checkPlayerArray(("@" + user),players) && !gameRunning){
       //Add player to list, and give them a class
-      var chosenClass = playerClasses[Math.floor(Math.random()*playerClasses.length)];
-      //var chosenClass = "Archer";
+      //var chosenClass = playerClasses[Math.floor(Math.random()*playerClasses.length)];
+      var chosenClass = "Mage";
       var newClass;
 
       switch (chosenClass) {
         case "Mage":
-          newClass= new Mage("@" + user,600);
+          newClass= new Mage("@" + user,startingHealth);
           break;
         case "Archer":
-          newClass = new Archer("@" + user,600);
+          newClass = new Archer("@" + user,startingHealth);
           break;
         case "Knight":
-          newClass = new Knight("@" + user,600);
+          newClass = new Knight("@" + user,startingHealth);
           break;
       }
       players.push(newClass);
@@ -158,11 +164,11 @@ function interactionEvent(event){
       }
     }
   }else if(event.event == "unfavorite"){
-    if((target == originalTweetID) && !checkPlayerArray("@" + user) && !gameRunning){
+    if((target == originalTweetID) && !checkPlayerArray(("@" + user),players) && !gameRunning){
       for(var i = 0; i < players.length;i++){
         if(players[i].name == ("@" + user)){
           console.log("@" + user + " left the game");
-          players.splice(i,1);
+          players.splice(i);
         }
       }
     }
@@ -295,11 +301,13 @@ function playerInfo(){
       inventorySpacingX += 20;
     }
 
-    //Charge
+    //`Charge`
     var chargeSpacingX = 725;
     for(var j = 0;j < players[i].charge;j++){
       context.beginPath();
       context.arc(chargeSpacingX,ySpacing+17,5,0,2*Math.PI);
+      context.fillStyle = 'black';
+      context.fill();
       context.stroke();
       context.closePath();
       chargeSpacingX += 15;
@@ -414,10 +422,10 @@ function tweetCycle(){
   context.font = "15px Arial";
   ySpacing = 540;
   xSpacing = 100;
-  //Boss Hits
   for(var i = 0;i < players.length; i++){
     var attackDamage = Math.floor((Math.random() * (bossMaxDamage - bossMinDamage) + bossMinDamage));
     var info = boss.attack(players[i]);
+    //console.log(players[i].name + ":" + players[i].health);
     //console.log(info);
     if(info == 0){
       context.fillStyle = "black";
@@ -442,6 +450,7 @@ function tweetCycle(){
 
 
   //Player Hits and Heals and inventory
+  console.log("Starting player info");
   for(var i = 0;i < players.length; i++){
     var pHealth = players[i].health;
     var pMaxHealth = players[i].maxHealth;
@@ -481,6 +490,7 @@ function tweetCycle(){
           removeItem("Health",players[i].inventory);
           players[i].action = "hit";
           players[i].target = "";
+          console.log(players[i].name + " healed");
         break;
       case "self heal":
         context.fillStyle = "green";
@@ -498,6 +508,7 @@ function tweetCycle(){
         context.fillText("Dmg Absorption: " + Math.floor(players[i].absorb * 100) + "%",textWidth - context.measureText("Dmg Absorption: " + Math.floor(players[i].absorb * 100) + "%").width,ySpacing + 17);
         removeItem("Armor",players[i].inventory);
         players[i].action = "hit";
+        console.log(players[i].name + " increased armor");
         break;
       case "cape":
         context.fillStyle = "black";
@@ -506,6 +517,7 @@ function tweetCycle(){
         context.fillText("Dodge Chance: " + Math.floor(players[i].dodgeChance * 100) + "%",textWidth - context.measureText("Dodge Chance:" + Math.floor(players[i].dodgeChance * 100) + "%").width,ySpacing + 17);
         removeItem("Cape",players[i].inventory);
         players[i].action = "hit";
+        console.log(players[i].name + " increased speed");
         break;
       case "damage":
         context.fillStyle = "black";
@@ -514,6 +526,7 @@ function tweetCycle(){
         context.fillText("Max Damage: " + players[i].maxDamage,textWidth - context.measureText("Max Damage: " + players[i].maxDamage).width,ySpacing + 17);
         removeItem("Damage",players[i].inventory);
         players[i].action = "hit";
+        console.log(players[i].name + " increased damage");
         break;
       case "rage":
         context.fillStyle = "red";
@@ -530,7 +543,17 @@ function tweetCycle(){
         attackDamage = players[i].attack();
         players[i].handleBeserk();
         context.fillText(attackDamage + " damage @" + bossName,textWidth - context.measureText(attackDamage + " damage @" + bossName).width,ySpacing + 17);
+        console.log(players[i].name + " went beserk");
         break;
+      case "revive":
+        context.fillStyle = "green";
+        context.font = "15px Arial";
+        players[i].revive(players,deads);
+        context.fillText("Revive " + players[i].target,textWidth - context.measureText("Revive " + players[i].target).width,ySpacing + 17);
+        players[i].target = "";
+        players[i].action = "hit";
+        console.log(players[i].name + " revived someone");
+      break;
     }
     players[i].handleCharge();
 
@@ -540,7 +563,7 @@ function tweetCycle(){
 
     //Inventory
     for(var j = 0;j < players[i].inventory.length;j++){
-      if(players[i].action == "normal"){
+      if(players[i].mode == "normal"){
         context.fillStyle = "black";
         context.font = "10pt Arial";
       }else{
@@ -560,9 +583,12 @@ function tweetCycle(){
 
     //Charge
     var chargeSpacingX = 725;
+    context.fillStyle = "black";
     for(var j = 0;j < players[i].charge;j++){
       context.beginPath();
       context.arc(chargeSpacingX,ySpacing+17,5,0,2*Math.PI);
+      context.fillStyle = 'black';
+      context.fill();
       context.stroke();
       context.closePath();
       chargeSpacingX += 15;
@@ -606,10 +632,6 @@ function tweetCycle(){
       context.fillStyle = "red";
     }
 
-    if(players[i].health == 0){
-      players[i].deaths++;
-      deads.push(players[i]);
-    }
 
     context.rect(226,ySpacing + 7,(pHealth * 110)/pMaxHealth,10);
     context.fill();
@@ -686,7 +708,6 @@ function attackCycle(){
     tweetStream.stop();
     console.log("Cycle:" + cycles);
     tweetCycle();
-
     if(totalHealth != 0 && boss.health != 0){
       cleanPlayerArray();
       tweetStream = T.stream('user');
@@ -714,11 +735,17 @@ function attackCycle(){
 
 //Delete any players who have a health of 0
 function cleanPlayerArray(){
+  var tempArray = [];
   for(var i = 0;i < players.length; i++){
+    //console.log(players[i].name + ":" + players[i].health);
     if(players[i].health == 0){
-      players.splice(i,1);
+      console.log(players[i].name + " is dead");
+      deads.push(players[i]);
+    }else{
+      tempArray.push(players[i]);
     }
   }
+  players = tempArray;
 }
 
 //The callback function for when the bot is tweeted at
@@ -729,7 +756,7 @@ function tweetEvent(event){
 
   //If the tweet was directed at the bot
   if(receipent == "_SlayerBot_" && user != "_SlayerBot_"){
-    console.log("@" + user + "tweeted the bot");
+    console.log("@" + user + " tweeted the bot");
     //Make sure they are joining the game, and haven't already joined
     if((message.toUpperCase().indexOf("#JOINGAME") != -1) && checkPlayerArray(("@" + user),players) && !gameRunning){
       //Add player to list, and give them a class
@@ -739,13 +766,13 @@ function tweetEvent(event){
 
       switch (chosenClass) {
         case "Mage":
-          newClass= new Mage("@" + user,600);
+          newClass= new Mage("@" + user,startingHealth);
           break;
         case "Archer":
-          newClass = new Archer("@" + user,600);
+          newClass = new Archer("@" + user,startingHealth);
           break;
         case "Knight":
-          newClass = new Knight("@" + user,600);
+          newClass = new Knight("@" + user,startingHealth);
           break;
       }
       players.push(newClass);
@@ -758,7 +785,7 @@ function tweetEvent(event){
       }
     //Differentiate between "Heal" and "Health"
     }else if(message.toUpperCase().indexOf("#HEAL") != -1 && gameRunning){
-      //Check player array returns true if player is not in game....
+      //Check player array returns true if player is not in array....
       if(!checkPlayerArray(("@" + user),players)){
         var users = event.entities.user_mentions;
         //If there are no user mentions it is a heal item
@@ -775,7 +802,7 @@ function tweetEvent(event){
               }
             }else{
               if(player.getPlayerType() == "Mage" && target != null){
-                console.log(player.name + " is set to heal");
+                console.log(player.name + " is set to heal " + target);
                 player.action = "heal";
                 player.target = target;
               }
@@ -817,7 +844,7 @@ function tweetEvent(event){
     }else if(message.toUpperCase().indexOf("#RAGE") != -1 && gameRunning){
       if(!checkPlayerArray(("@" + user),players)){
         var player = getPlayer("@" + user);
-        if(player.cooldown == 4 && player.action != "rage"){
+        if(player.charge == 4 && player.action != "rage"){
           if(player.getPlayerType() == "Archer"){
             console.log(player.name + " is set to go into rage mode");
             player.action = "rage";
@@ -835,15 +862,24 @@ function tweetEvent(event){
         }
       }
     }else if(message.toUpperCase().indexOf("#REVIVE") != -1 && gameRunning){
+      console.log("received");
       if(!checkPlayerArray(("@" + user),players)){
+        console.log("player in game");
         var player = getPlayer("@" + user);
+        var users = event.entities.user_mentions;
         if(player.charge == 4 && player.action != "revive"){
+          console.log("player ready");
           if(player.getPlayerType() == "Mage"){
             if(users.length > 1){
+              console.log("target in tweet");
               var player = getPlayer("@" + user);
-              var target = getPlayer(target);
-              if(target != null){
-                //Check "deads" array
+              var target = "@" + users[1].screen_name;
+              if(!utils.checkPlayerArray(target,deads)){
+                console.log("target is in dead array");
+                //Get player from dead array and move them back to the player array
+                console.log(player.name + " is set to revive " + target);
+                player.action = "revive";
+                player.target = target;
               }
             }
           }
@@ -863,7 +899,7 @@ function removeItem(itemName,inventory){
       if(inventory[i] == itemName){
         found = true;
         inventory.push("");
-        inventory.splice(i,1);
+        inventory.splice(i);
       }
     }
   }
@@ -883,21 +919,21 @@ function randomPlayerMaker(amount){
   for(var i = 0;i < amount;i++){
     var chosenClass = playerClasses[Math.floor(Math.random()*playerClasses.length)];
     var num = Math.floor((Math.random() * 100)+1);
-    var health = 600;
     var newClass;
 
     switch (chosenClass) {
       case "Mage":
-        newClass= new Mage("@player" + num,health);
+        newClass= new Mage("@player" + num,startingHealth);
         break;
       case "Archer":
-        newClass = new Archer("@player" + num,health);
+        newClass = new Archer("@player" + num,startingHealth);
         break;
       case "Knight":
-        newClass = new Knight("@player" + num,health);
+        newClass = new Knight("@player" + num,startingHealth);
         break;
     }
     players.push(newClass);
+    totalHealth += newHealth;
   }
   //console.log(players.length);
 }

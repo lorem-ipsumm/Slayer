@@ -6,7 +6,7 @@ var exports = module.exports = {};
 exports.checkPlayerArray = function(name,array){
   var pass = true;
   for(var i = 0;i < array.length; i++){
-    if(players[i].name == name){
+    if(array[i].name == name){
       pass = false;
     }
   }
@@ -20,9 +20,12 @@ exports.printPlayerArray = function(array){
 }
 
 exports.getPlayer = function(user,array){
-  for(var i = 0; i < players.length;i++){
-    if(players[i].name == user){
-      return players[i];
+  console.log("finding user");
+  for(var i = 0; i < array.length;i++){
+    console.log("Checking against " + array[i].name + "..." + user)
+    if(array[i].name == user){
+      console.log("found");
+      return array[i];
     }
   }
   return null;
@@ -62,4 +65,12 @@ exports.randomPlayerMaker = function(amount){
     players.push(newClass);
   }
   //console.log(players.length);
+}
+
+exports.removeFromArray = function(name,array){
+  for(var i = 0;i < array.length;i++){
+    if(array[i].name == name){
+      array.splice(i);
+    }
+  }
 }

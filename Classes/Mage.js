@@ -1,3 +1,5 @@
+var utils = require('../utilities');
+
 class Mage{
   constructor(name,h){
     this.health = h;
@@ -35,18 +37,18 @@ class Mage{
 
   attacked(damage){
     //In case the damage needs to be edited
-    var fDamage = damage;
+    var fDamage = damage - Math.floor(damage * this.absorb);
     if(Math.random() > this.dodgeChance){
       if(this.health - fDamage > 0){
-        fDamage = damage - Math.floor(damage * this.absorb);
         this.health -= fDamage;
       }else{
+        //console.log(this.name + " is dead");
+        //utils.removeFromArray(this.name,);
         this.health = 0;
       }
     }else{
       return 0;
     }
-
     return fDamage;
   }
 
@@ -77,8 +79,18 @@ class Mage{
     }
   }
 
-  revive(player){
-
+  revive(players,deadArray){
+    console.log("getting player");
+    var player = utils.getPlayer(this.target,deadArray);
+    if(player != null){
+      player.health = player.maxHealth / 2;
+      players.push(player);
+      utils.removeFromArray(player.name,deadArray);
+      this.charging = true;
+      this.charge = 0;
+    }else{
+      console.log("player not dead");
+    }
   }
 
 

@@ -1,3 +1,5 @@
+var utils = require('../utilities');
+
 class Knight{
   constructor(name,h){
     this.health = h;
@@ -36,12 +38,13 @@ class Knight{
 
   attacked(damage){
     //In case the damage needs to be edited
-    var fDamage = damage;
+    var fDamage = damage - Math.floor(damage * this.absorb);
     if(Math.random() > this.dodgeChance){
       if(this.health - fDamage > 0){
-        fDamage = damage - Math.floor(damage * this.absorb);
         this.health -= fDamage;
       }else{
+        //console.log(this.name + " is dead");
+        //utils.removeFromArray(this.name,players);
         this.health = 0;
       }
     }else{
@@ -55,7 +58,7 @@ class Knight{
       this.charge++;
     }
 
-    if(this.charge == 5){
+    if(this.charge == 4){
       this.charging = false;
     }
   }

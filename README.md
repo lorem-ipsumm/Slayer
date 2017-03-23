@@ -1,4 +1,4 @@
-#Slayer
+##Slayer
 
 Slayer is a Twitter game that allows anyone with an account to play. Every hour a new game will begin and everyone who joins will work together to defeat a boss. Each player is randomly assigned a class. Every 1.5 minutes a new cycle will begin. In each cycle the players can individually choose an action using hashtags. Each player has a four slot inventory. As the game progresses, items will randomly be added to the inventories. These items are upgrades that last the duration of the game.
 

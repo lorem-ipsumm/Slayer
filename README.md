@@ -1,4 +1,4 @@
-##Slayer
+## Slayer
 
 Slayer is a Twitter game that allows anyone with an account to play. Every hour a new game will begin and everyone who joins will work together to defeat a boss. Each player is randomly assigned a class. Every 1.5 minutes a new cycle will begin. In each cycle the players can individually choose an action using hashtags. Each player has a four slot inventory. As the game progresses, items will randomly be added to the inventories. These items are upgrades that last the duration of the game.
 
@@ -14,7 +14,7 @@ Slayer is a Twitter game that allows anyone with an account to play. Every hour 
 	If there is at least one person computers will fill the empty spots
 
 
-##Classes
+## Classes
 
 Each class has a unique set of strengths and weaknesses that synergize when paired with the other classes.
 
@@ -72,7 +72,7 @@ Each class has a unique set of strengths and weaknesses that synergize when pair
 		Command: @_SlayerBot_ #heal @[yourname]
 
 
-##Bosses
+## Bosses
 >**OMEGA**
 
 	Health: Number of players * 3500

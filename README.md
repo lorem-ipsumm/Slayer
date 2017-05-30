@@ -19,7 +19,7 @@ Slayer is a Twitter game that allows anyone with an account to play. Every hour 
 Each class has a unique set of strengths and weaknesses that synergize when paired with the other classes.
 
 
-![Knight](/Resources/Images/Class Icons/Knight.png) **Knight:**
+![Knight](/Images/Class Icons/Knight.png) **Knight:**
 
 	Tank
 	Decent damage [70-170]

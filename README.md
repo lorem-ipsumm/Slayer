@@ -19,7 +19,7 @@ Slayer is a Twitter game that allows anyone with an account to play. Every hour 
 Each class has a unique set of strengths and weaknesses that synergize when paired with the other classes.
 
 
->![alt tag](/Resources/Images/Class Icons/Knight.png) **Knight:**
+![alt tag](/Resources/Images/Class Icons/Knight.png) **Knight:**
 
 	Tank
 	Decent damage [70-170]
@@ -33,7 +33,7 @@ Each class has a unique set of strengths and weaknesses that synergize when pair
 
 
 
->![alt tag](/Resources/Images/Class Icons/Archer.png) **Archer:**
+![alt tag](/Resources/Images/Class Icons/Archer.png) **Archer:**
 
 	Trash
 	Weak damage [50-120]
@@ -56,7 +56,7 @@ Each class has a unique set of strengths and weaknesses that synergize when pair
 
 
 
->![alt tag](/Resources/Images/Class Icons/Mage.png)  **Mage:**
+![alt tag](/Resources/Images/Class Icons/Mage.png)  **Mage:**
 
 	Glass Cannon
 	High Damage [90-220]
@@ -87,7 +87,7 @@ Each class has a unique set of strengths and weaknesses that synergize when pair
 
 
 
-##Items
+## Items
 
 	Each player has a 10% chance (percentage may vary) of getting a random item every attack cycle
 	Each player has four inventory spaces

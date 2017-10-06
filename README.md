@@ -19,7 +19,7 @@ Slayer is a Twitter game that allows anyone with an account to play. Every hour 
 Each class has a unique set of strengths and weaknesses that synergize when paired with the other classes.
 
 
-![Knight](/Resources/Images/Class Icons/Knight.png) **Knight:**
+![Knight](https://github.com/SolarFloss/Slayer/blob/master/Resources/Images/Class%20Icons/Knight.png) **Knight:**
 
 	Tank
 	Decent damage [70-170]
@@ -33,7 +33,7 @@ Each class has a unique set of strengths and weaknesses that synergize when pair
 
 
 
-![Archer](/Resources/Images/Class Icons/Archer.png) **Archer:**
+![Archer](https://github.com/SolarFloss/Slayer/blob/master/Resources/Images/Class%20Icons/Archer.png) **Archer:**
 
 	Trash
 	Weak damage [50-120]
@@ -56,7 +56,7 @@ Each class has a unique set of strengths and weaknesses that synergize when pair
 
 
 
-![Mage](/Resources/Images/Class Icons/Mage.png)  **Mage:**
+![Mage](https://github.com/SolarFloss/Slayer/blob/master/Resources/Images/Class%20Icons/Mage.png)  **Mage:**
 
 	Glass Cannon
 	High Damage [90-220]
